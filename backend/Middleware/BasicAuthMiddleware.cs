@@ -32,7 +32,7 @@ namespace backend.Middleware
 
             var parts = decoded.Split(':');
 
-            if (parts[0] != USER || parts[1] != PASS)
+            if (parts[0] != _user || parts[1] != _pass)
             {
                 context.Response.StatusCode = 401;
                 return;
