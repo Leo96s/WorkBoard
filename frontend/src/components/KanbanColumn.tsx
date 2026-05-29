@@ -1,3 +1,4 @@
+import { Droppable } from "@hello-pangea/dnd";
 import { TaskCard as ITaskCard, Column, COLUMN_LABELS, COLUMN_COLORS } from "@/types";
 import TaskCard from "./TaskCard";
 
@@ -23,23 +24,31 @@ export default function KanbanColumn({ column, tasks, onEdit, onDelete, onMove, 
         <button
           onClick={onAdd}
           className="text-lg text-gray-400 hover:text-blue-500 transition font-bold"
-          title="Adicionar cartão"
-        >
-          +
-        </button>
+        >+</button>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {tasks.map(task => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onMove={onMove}
-          />
-        ))}
-      </div>
+      <Droppable droppableId={String(column)}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={`flex flex-col gap-3 flex-1 rounded-lg transition p-1
+              ${snapshot.isDraggingOver ? "bg-blue-50 ring-2 ring-blue-200" : ""}`}
+          >
+            {tasks.map((task, index) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                index={index}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onMove={onMove}
+              />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 }
