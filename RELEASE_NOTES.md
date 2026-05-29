@@ -1,3 +1,5 @@
+## v0.2.1 - 2026-05-29
+* fix: agora é possível arrastar as task entre os boards
 ## v0.2.0 - 2026-05-29
 * feat: frontend inicial e funcional criado
 ## v0.1.1 - 2026-05-28
