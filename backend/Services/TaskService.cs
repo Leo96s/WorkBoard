@@ -1,5 +1,4 @@
 ﻿using backend.DTOs;
-using backend.Enum;
 using backend.Model;
 using backend.Repositories;
 
@@ -25,7 +24,8 @@ namespace backend.Services
                 Title = dto.Title,
                 Description = dto.Description,
                 AssignedTo = dto.AssignedTo,
-                Column = TaskColumn.Em_Curso
+                ColumnId = dto.ColumnId,
+                BoardId = dto.BoardId
             };
 
             _repository.Add(task);
@@ -41,21 +41,24 @@ namespace backend.Services
             task.Description = dto.Description;
             task.AssignedTo = dto.AssignedTo;
 
+            if (dto.ColumnId.HasValue)
+                task.ColumnId = dto.ColumnId.Value;
+
             _repository.Update(task);
         }
 
         public void Delete(Guid id) => _repository.Delete(id);
 
-        public void Move(Guid id, TaskColumn newColumn)
+        public void Move(Guid id, Guid newColumnId)
         {
             var task = _repository.GetById(id);
             if (task == null) return;
 
-            task.Column = newColumn;
+            task.ColumnId = newColumnId;
             _repository.Update(task);
         }
 
-        public IEnumerable<TaskCard> Filter(TaskColumn? column, string? assignedTo)
-            => _repository.Filter(column, assignedTo);
+        public IEnumerable<TaskCard> Filter(Guid? boardId, Guid? columnId,string? assignedTo)
+            => _repository.Filter(boardId, columnId, assignedTo);
     }
 }

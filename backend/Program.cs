@@ -1,6 +1,8 @@
 using backend.Middleware;
-using Microsoft.OpenApi.Models;
+using backend.Repositories;
+using backend.Services;
 using DotNetEnv;
+using Microsoft.OpenApi.Models;
 
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +19,16 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton<backend.Repositories.ITaskRepository, backend.Repositories.InMemoryTaskRepository>();
-builder.Services.AddSingleton<backend.Services.TaskService>();
+// Repositories (sem duplicados)
+builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepository>();
+builder.Services.AddSingleton<IBoardRepository, InMemoryBoardRepository>();
+builder.Services.AddSingleton<IBoardColumnRepository, InMemoryBoardColumnRepository>();
+
+// Services
+builder.Services.AddSingleton<TaskService>();
+builder.Services.AddSingleton<BoardService>();
+
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "WorkBoard API", Version = "v1" });

@@ -4,6 +4,6 @@ namespace backend.DTOs
 {
     public class MoveTaskDto
     {
-        public TaskColumn NewColumn { get; set; }
+        public Guid NewColumnId { get; set; }
     }
 }

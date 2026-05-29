@@ -34,7 +34,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, UpdateTaskDto dto)
+        public IActionResult Update(Guid id, [FromBody] UpdateTaskDto dto)
         {
             _service.Update(id, dto);
             return NoContent();
@@ -48,16 +48,21 @@ namespace backend.Controllers
         }
 
         [HttpPatch("{id}/move")]
-        public IActionResult Move(Guid id, MoveTaskDto dto)
+        public IActionResult Move(Guid id, [FromBody] MoveTaskDto dto)
         {
-            _service.Move(id, dto.NewColumn);
+            _service.Move(id, dto.NewColumnId);
             return NoContent();
         }
 
+        // GET /api/tasks/filter?boardId=...&columnId=...&assignedTo=...
         [HttpGet("filter")]
-        public IActionResult Filter([FromQuery] TaskColumn? column, [FromQuery] string? assignedTo)
+        public IActionResult Filter(
+            [FromQuery] Guid? boardId,
+            [FromQuery] Guid? columnId,
+            [FromQuery] string? assignedTo)
         {
-            return Ok(_service.Filter(column, assignedTo));
+            return Ok(_service.Filter(boardId, columnId, assignedTo));
         }
     }
+
 }

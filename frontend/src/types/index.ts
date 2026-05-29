@@ -1,34 +1,52 @@
-export type Column = 1 | 2 | 3;
-
-export const COLUMN_LABELS: Record<Column, string> = {
-  1: "A Fazer",
-  2: "Em Curso",
-  3: "Concluído"
-};
-
-export const COLUMN_COLORS: Record<Column, string> = {
-  1: "border-red-400",
-  2: "border-yellow-400",
-  3: "border-green-400"
-};
-
+export interface Board {
+  id: string;
+  name: string;
+  columns: BoardColumn[];
+}
+ 
+export interface BoardColumn {
+  id: string;
+  name: string;
+  color: string;
+  order: number;
+  boardId: string;
+}
+ 
 export interface TaskCard {
   id: string;
   title: string;
   description: string;
-  column: Column;
   assignedTo: string;
+  columnId: string;
+  boardId: string;
   createdAt: string;
 }
-
+ 
 export interface CreateTaskDto {
   title: string;
   description: string;
   assignedTo: string;
+  boardId: string;
+  columnId: string;
 }
-
+ 
 export interface UpdateTaskDto {
   title: string;
   description: string;
   assignedTo: string;
+  columnId?: string;
+}
+ 
+export interface CreateBoardDto {
+  name: string;
+}
+ 
+export interface CreateColumnDto {
+  name: string;
+  color: string;
+}
+ 
+export interface UpdateColumnDto {
+  name: string;
+  color: string;
 }

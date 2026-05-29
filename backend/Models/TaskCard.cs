@@ -1,4 +1,5 @@
 ﻿using backend.Enum;
+using backend.Models;
 
 namespace backend.Model
 {
@@ -10,7 +11,9 @@ namespace backend.Model
 
         public string Description { get; set; } = string.Empty;
 
-        public TaskColumn Column { get; set; } = TaskColumn.Em_Curso;
+        public Guid ColumnId { get; set; }
+
+        public Guid BoardId { get; set; }
 
         public string AssignedTo { get; set; } = string.Empty;
 

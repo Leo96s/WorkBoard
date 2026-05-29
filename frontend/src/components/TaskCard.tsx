@@ -1,18 +1,18 @@
 "use client";
+
 import { Draggable } from "@hello-pangea/dnd";
-import { TaskCard as ITaskCard, COLUMN_LABELS, Column } from "@/types";
+import { TaskCard as ITask, BoardColumn } from "@/types";
 
 interface Props {
-  task: ITaskCard;
+  task: ITask;
   index: number;
-  onEdit: (task: ITaskCard) => void;
+  columns: BoardColumn[];
+  onEdit: (task: ITask) => void;
   onDelete: (id: string) => void;
-  onMove: (id: string, column: Column) => void;
+  onMove: (id: string, columnId: string) => void;
 }
 
-export default function TaskCard({ task, index, onEdit, onDelete, onMove }: Props) {
-  const columns: Column[] = [1, 2, 3];
-
+export default function TaskCard({ task, index, columns, onEdit, onDelete, onMove }: Props) {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
@@ -22,50 +22,54 @@ export default function TaskCard({ task, index, onEdit, onDelete, onMove }: Prop
           className={`bg-white rounded-xl shadow-sm border p-4 flex flex-col gap-2 transition
             ${snapshot.isDragging ? "shadow-xl rotate-1 scale-105 border-blue-400" : "hover:shadow-md"}`}
         >
-          {/* Handle de drag separado */}
+          {/* Header */}
           <div className="flex justify-between items-start">
-            <div className="flex items-center gap-2 flex-1">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               <span
                 {...provided.dragHandleProps}
-                className="text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing text-lg select-none"
-                title="Arrastar"
-              >⠿</span>
-              <h3 className="font-semibold text-gray-800">{task.title}</h3>
+                className="cursor-grab text-gray-400 flex-shrink-0"
+              >
+                ⠿
+              </span>
+              <h3 className="font-semibold text-gray-800 truncate">{task.title}</h3>
             </div>
-            <div className="flex gap-1">
+
+            <div className="flex gap-1 flex-shrink-0 ml-2">
               <button
                 onClick={() => onEdit(task)}
-                className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 transition"
-              >✏️</button>
+                className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded transition"
+              >
+                ✏️
+              </button>
               <button
                 onClick={() => onDelete(task.id)}
-                className="text-xs px-2 py-1 rounded bg-red-50 hover:bg-red-100 transition"
-              >🗑️</button>
+                className="text-xs px-2 py-1 bg-red-50 hover:bg-red-100 rounded transition"
+              >
+                🗑️
+              </button>
             </div>
           </div>
 
+          {/* Description */}
           {task.description && (
-            <p className="text-sm text-gray-500">{task.description}</p>
+            <p className="text-sm text-gray-500 line-clamp-2">{task.description}</p>
           )}
 
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
-              👤 {task.assignedTo}
-            </span>
-            <span className="text-xs text-gray-400">
-              {new Date(task.createdAt).toLocaleDateString("pt-PT")}
-            </span>
+          {/* Footer */}
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>👤 {task.assignedTo || "—"}</span>
+            <span>{new Date(task.createdAt).toLocaleDateString("pt-PT")}</span>
           </div>
 
-          {/* Dropdown para mover */}
+          {/* Mover para coluna */}
           <select
-            className="mt-1 text-xs border-2 border-gray-200 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:border-blue-400 transition"
-            value={task.column}
-            onChange={e => onMove(task.id, Number(e.target.value) as Column)}
+            className="mt-1 text-xs border border-gray-200 rounded px-2 py-1 bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-300"
+            value={task.columnId}
+            onChange={(e) => onMove(task.id, e.target.value)}
           >
-            {columns.map(col => (
-              <option key={col} value={col}>
-                {COLUMN_LABELS[col]}
+            {columns.map((col) => (
+              <option key={col.id} value={col.id}>
+                {col.name}
               </option>
             ))}
           </select>
