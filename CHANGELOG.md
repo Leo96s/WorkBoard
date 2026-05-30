@@ -1,3 +1,5 @@
+## v0.4.0 - 2026-05-30
+* feat: tags adicionadas e resolvidos alguns bugs
 ## v0.3.0 - 2026-05-29
 * feat: criado funçao para criar novos boards e colunas
 ## v0.2.1 - 2026-05-29
