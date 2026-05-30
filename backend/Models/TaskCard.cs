@@ -18,5 +18,7 @@ namespace backend.Model
         public string AssignedTo { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public List<string> Tags { get; set; } = new();
     }
 }

@@ -2,25 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { TaskCard, BoardColumn } from "@/types";
+import { tagColor } from "@/lib/tagColor";
 
 interface Props {
   task?: TaskCard;
   columns: BoardColumn[];
   defaultColumnId: string;
+  globalTags: string[];
   onClose: () => void;
   onSave: (data: {
     title: string;
     description: string;
     assignedTo: string;
     columnId: string;
+    tags: string[];
   }) => void;
 }
 
-export default function TaskModal({ task, columns, defaultColumnId, onClose, onSave }: Props) {
+export default function TaskModal({  task, columns, defaultColumnId, globalTags, onClose, onSave }: Props) {
   const [title, setTitle]           = useState(task?.title ?? "");
   const [description, setDescription] = useState(task?.description ?? "");
   const [assignedTo, setAssignedTo] = useState(task?.assignedTo ?? "");
   const [columnId, setColumnId]     = useState(task?.columnId ?? defaultColumnId);
+  const [tags, setTags]               = useState<string[]>(task?.tags ?? []);
+  const [tagInput, setTagInput]       = useState("");
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
+
+  const suggestedTags = globalTags.filter(
+    tag => !tags.includes(tag) && tag.toLowerCase().includes(tagInput.toLowerCase())
+  );
 
   // Sincroniza se a task mudar (edição)
   useEffect(() => {
@@ -28,11 +38,26 @@ export default function TaskModal({ task, columns, defaultColumnId, onClose, onS
     setDescription(task?.description ?? "");
     setAssignedTo(task?.assignedTo ?? "");
     setColumnId(task?.columnId ?? defaultColumnId);
+    setTags(task?.tags ?? []);
+    setTagInput("");
+    setShowTagDropdown(false);
   }, [task, defaultColumnId]);
+
+  const addTag = (tagToAdd?: string) => {
+    const trimmed = (tagToAdd ?? tagInput).trim();
+    if (!trimmed || tags.includes(trimmed)) return;
+    setTags(prev => [...prev, trimmed]);
+    setTagInput("");
+    setShowTagDropdown(false);
+  };
+
+  const removeTag = (tag: string) => {
+    setTags(prev => prev.filter(t => t !== tag));
+  };
 
   const handleSave = () => {
     if (!title.trim()) return;
-    onSave({ title: title.trim(), description, assignedTo, columnId });
+    onSave({ title: title.trim(), description, assignedTo, columnId, tags });
   };
 
   return (
@@ -100,6 +125,69 @@ export default function TaskModal({ task, columns, defaultColumnId, onClose, onS
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Tags</label>
+
+          {/* Tags já adicionadas */}
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
+                >
+                  {tag}
+                  <button onClick={() => removeTag(tag)} className="hover:opacity-60 transition">×</button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Input com dropdown de sugestões */}
+          <div className="relative">
+            <div className="flex gap-2">
+              <input
+                value={tagInput}
+                onChange={(e) => {
+                  setTagInput(e.target.value);
+                  setShowTagDropdown(true);
+                }}
+                onFocus={() => setShowTagDropdown(true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") { e.preventDefault(); addTag(tagInput); }
+                  if (e.key === "Escape") setShowTagDropdown(false);
+                }}
+                placeholder="Nova tag ou pesquisar..."
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <button
+                onClick={() => addTag(tagInput)}
+                disabled={!tagInput.trim()}
+                className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-40 transition"
+              >
+                + Adicionar
+              </button>
+            </div>
+
+            {/* Dropdown de tags existentes */}
+            {showTagDropdown && suggestedTags.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-40 overflow-y-auto">
+                {suggestedTags.map((tag) => (
+                  <button
+                    key={tag}
+                    onMouseDown={(e) => { e.preventDefault(); addTag(tag); }}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center gap-2 text-sm"
+                  >
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}>
+                      {tag}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

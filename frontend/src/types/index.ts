@@ -20,6 +20,7 @@ export interface TaskCard {
   columnId: string;
   boardId: string;
   createdAt: string;
+  tags: string[];
 }
  
 export interface CreateTaskDto {
@@ -28,6 +29,7 @@ export interface CreateTaskDto {
   assignedTo: string;
   boardId: string;
   columnId: string;
+  tags: string[];
 }
  
 export interface UpdateTaskDto {
@@ -35,6 +37,7 @@ export interface UpdateTaskDto {
   description: string;
   assignedTo: string;
   columnId?: string;
+  tags: string[];
 }
  
 export interface CreateBoardDto {

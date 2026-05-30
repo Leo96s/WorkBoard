@@ -2,6 +2,7 @@
 
 import { Draggable } from "@hello-pangea/dnd";
 import { TaskCard as ITask, BoardColumn } from "@/types";
+import { tagColor } from "@/lib/tagColor";
 
 interface Props {
   task: ITask;
@@ -60,6 +61,20 @@ export default function TaskCard({ task, index, columns, onEdit, onDelete, onMov
             <span>👤 {task.assignedTo || "—"}</span>
             <span>{new Date(task.createdAt).toLocaleDateString("pt-PT")}</span>
           </div>
+
+          {/* Tags */}
+          {task.tags?.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {task.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Mover para coluna */}
           <select

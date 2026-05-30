@@ -8,6 +8,7 @@ namespace backend.Services
     {
         private readonly IBoardRepository _boardRepository;
         private readonly IBoardColumnRepository _columnRepository;
+        private readonly ITaskRepository _taskRepository;
 
         private static readonly (string Name, string Color)[] DefaultColumns = new[]
         {
@@ -16,10 +17,11 @@ namespace backend.Services
             ("Concluído", "#10B981")
         };
 
-        public BoardService(IBoardRepository boardRepository, IBoardColumnRepository columnRepository)
+        public BoardService(IBoardRepository boardRepository, IBoardColumnRepository columnRepository, ITaskRepository taskRepository)
         {
             _boardRepository = boardRepository;
             _columnRepository = columnRepository;
+            _taskRepository = taskRepository;
 
             // Criar colunas por defeito para o board inicial
             var defaultBoard = new Board { Name = "Meu Quadro" };
@@ -40,10 +42,26 @@ namespace backend.Services
         {
             var board = new Board { Name = dto.Name };
             _boardRepository.Add(board);
+            SeedDefaultColumns(board.Id);
             return ToDto(board);
         }
 
-        public void Delete(Guid id) => _boardRepository.Delete(id);
+        public bool Delete(Guid id)
+        {
+            if (_boardRepository.GetAll().Count() <= 1)
+                return false; // não apaga se for o último
+
+            var tasks = _taskRepository.GetAll().Where(t => t.BoardId == id).ToList();
+            foreach (var task in tasks)
+                _taskRepository.Delete(task.Id);
+
+            var columns = _columnRepository.GetByBoardId(id).ToList();
+            foreach (var column in columns)
+                _columnRepository.Delete(column.Id);
+
+            _boardRepository.Delete(id);
+            return true;
+        }
 
         public ColumnDto AddColumn(Guid boardId, CreateBoardColumnDto dto)
         {
@@ -77,6 +95,12 @@ namespace backend.Services
         {
             var column = _columnRepository.GetById(columnId);
             if (column == null || column.BoardId != boardId) return false;
+
+            // Apagar todas as tasks da coluna
+            var tasks = _taskRepository.GetAll().Where(t => t.ColumnId == columnId).ToList();
+            foreach (var task in tasks)
+                _taskRepository.Delete(task.Id);
+
             _columnRepository.Delete(columnId);
             return true;
         }

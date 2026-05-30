@@ -9,5 +9,7 @@
         public Guid ColumnId { get; set; }
         
         public Guid BoardId { get; set; }
+
+        public List<string> Tags { get; set; } = new();
     }
 }

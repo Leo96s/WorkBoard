@@ -7,5 +7,7 @@
         public string AssignedTo { get; set; } = string.Empty;
 
         public Guid? ColumnId { get; set; }
+
+        public List<string> Tags { get; set; } = new();
     }
 }

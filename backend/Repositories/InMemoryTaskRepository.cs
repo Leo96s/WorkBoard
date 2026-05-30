@@ -29,6 +29,7 @@ namespace backend.Repositories
             existing.Description = task.Description;
             existing.AssignedTo = task.AssignedTo;
             existing.ColumnId = task.ColumnId;
+            existing.Tags = task.Tags;
         }
 
         public void Delete(Guid id)

@@ -25,7 +25,8 @@ namespace backend.Services
                 Description = dto.Description,
                 AssignedTo = dto.AssignedTo,
                 ColumnId = dto.ColumnId,
-                BoardId = dto.BoardId
+                BoardId = dto.BoardId,
+                Tags = dto.Tags,
             };
 
             _repository.Add(task);
@@ -40,6 +41,7 @@ namespace backend.Services
             task.Title = dto.Title;
             task.Description = dto.Description;
             task.AssignedTo = dto.AssignedTo;
+            task.Tags = dto.Tags;
 
             if (dto.ColumnId.HasValue)
                 task.ColumnId = dto.ColumnId.Value;

@@ -37,7 +37,9 @@ namespace backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            _service.Delete(id);
+            var deleted = _service.Delete(id);
+            if (!deleted)
+                return BadRequest(new { message = "Não é possível apagar o único board existente." });
             return NoContent();
         }
 
