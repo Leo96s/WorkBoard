@@ -13,6 +13,15 @@ interface Props {
   onMove: (id: string, columnId: string) => void;
 }
 
+/**
+ * Cartão de tarefa exibível em uma coluna Kanban
+ * @param {ITask} task - Dados da tarefa
+ * @param {number} index - Índice da tarefa na lista
+ * @param {BoardColumn[]} columns - Todas as colunas disponíveis
+ * @param {Function} onEdit - Callback ao editar a tarefa
+ * @param {Function} onDelete - Callback ao deletar a tarefa
+ * @param {Function} onMove - Callback ao mover a tarefa para outra coluna
+ */
 export default function TaskCard({ task, index, columns, onEdit, onDelete, onMove }: Props) {
   return (
     <Draggable draggableId={task.id} index={index}>

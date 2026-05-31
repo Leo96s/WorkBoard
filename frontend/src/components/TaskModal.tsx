@@ -19,6 +19,15 @@ interface Props {
   }) => void;
 }
 
+/**
+ * Modal para criar ou editar uma tarefa
+ * @param {TaskCard} [task] - Tarefa a editar (opcional, novo se não fornecido)
+ * @param {BoardColumn[]} columns - Lista de colunas disponíveis
+ * @param {string} defaultColumnId - ID da coluna padrão para novas tarefas
+ * @param {string[]} globalTags - Tags globais disponíveis para sugestão
+ * @param {Function} onClose - Função chamada ao fechar o modal
+ * @param {Function} onSave - Função chamada ao salvar a tarefa com seus dados
+ */
 export default function TaskModal({  task, columns, defaultColumnId, globalTags, onClose, onSave }: Props) {
   const [title, setTitle]           = useState(task?.title ?? "");
   const [description, setDescription] = useState(task?.description ?? "");
@@ -32,7 +41,9 @@ export default function TaskModal({  task, columns, defaultColumnId, globalTags,
     tag => !tags.includes(tag) && tag.toLowerCase().includes(tagInput.toLowerCase())
   );
 
-  // Sincroniza se a task mudar (edição)
+  /**
+   * Sincroniza o estado do modal quando a tarefa a editar muda
+   */
   useEffect(() => {
     setTitle(task?.title ?? "");
     setDescription(task?.description ?? "");
@@ -43,18 +54,29 @@ export default function TaskModal({  task, columns, defaultColumnId, globalTags,
     setShowTagDropdown(false);
   }, [task, defaultColumnId]);
 
+  /**
+   * Adiciona uma nova tag à tarefa
+   * @param {string} [tagToAdd] - Tag a adicionar (ou usa tagInput se não fornecido)
+   */
   const addTag = (tagToAdd?: string) => {
     const trimmed = (tagToAdd ?? tagInput).trim();
     if (!trimmed || tags.includes(trimmed)) return;
     setTags(prev => [...prev, trimmed]);
-    setTagInput("");
+    setTagInput(\"\");
     setShowTagDropdown(false);
   };
 
+  /**
+   * Remove uma tag da tarefa
+   * @param {string} tag - Tag a remover
+   */
   const removeTag = (tag: string) => {
     setTags(prev => prev.filter(t => t !== tag));
   };
 
+  /**
+   * Salva a tarefa se o título for válido
+   */
   const handleSave = () => {
     if (!title.trim()) return;
     onSave({ title: title.trim(), description, assignedTo, columnId, tags });

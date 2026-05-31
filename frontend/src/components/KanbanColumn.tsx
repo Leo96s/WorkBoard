@@ -14,6 +14,18 @@ interface Props {
   dragHandleProps?: DraggableProvidedDragHandleProps | null;
 }
 
+/**
+ * Coluna Kanban que exibe as tarefas e permite gerenciá-las
+ * @param {BoardColumn} column - Dados da coluna
+ * @param {ITaskCard[]} tasks - Tarefas na coluna
+ * @param {BoardColumn[]} columns - Todas as colunas disponíveis
+ * @param {Function} onEdit - Callback ao editar uma tarefa
+ * @param {Function} onDelete - Callback ao deletar uma tarefa
+ * @param {Function} onMove - Callback ao mover uma tarefa
+ * @param {Function} onAdd - Callback ao adicionar nova tarefa
+ * @param {Function} onDeleteColumn - Callback ao deletar a coluna
+ * @param {Object} [dragHandleProps] - Props para drag and drop da coluna
+ */
 export default function KanbanColumn({
   column,
   tasks,

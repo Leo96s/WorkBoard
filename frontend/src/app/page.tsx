@@ -9,6 +9,10 @@ import KanbanColumn from "@/components/KanbanColumn";
 import TaskModal from "@/components/TaskModal";
 import BoardModal from "@/components/BoardModal";
 
+/**
+ * Página principal do aplicativo Kanban
+ * Gerencia boards, colunas e tarefas com suporte a drag and drop
+ */
 export default function Home() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [activeBoard, setActiveBoard] = useState<Board | null>(null);
@@ -22,6 +26,9 @@ export default function Home() {
   const [newColumnName, setNewColumnName] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Carrega todos os boards e define o board ativo
+   */
   const loadBoards = async () => {
     const res = await boardApi.getAll();
     setBoards(res.data);
@@ -36,6 +43,10 @@ export default function Home() {
     }
   };
 
+  /**
+   * Carrega as tarefas de um board específico
+   * @param {string} boardId - ID do board
+   */
   const loadTasks = async (boardId: string) => {
     const res = await taskApi.filterByBoard(boardId);
     setTasks(res.data);
@@ -44,6 +55,9 @@ export default function Home() {
   useEffect(() => { loadBoards(); }, []);
   useEffect(() => { if (activeBoard) loadTasks(activeBoard.id); }, [activeBoard]);
 
+  /**
+   * Listener para fechar dropdown ao clicar fora
+   */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -57,7 +71,10 @@ export default function Home() {
   // Adicionar estado
 const [globalTags, setGlobalTags] = useState<string[]>([]);
 
-// Quando uma task é guardada, atualizar as tags globais com as novas
+/**
+ * Mescla novas tags nas tags globais
+ * @param {string[]} newTags - Tags a adicionar
+ */
 const mergeGlobalTags = (newTags: string[]) => {
   setGlobalTags(prev => {
     const merged = [...prev];
@@ -66,6 +83,10 @@ const mergeGlobalTags = (newTags: string[]) => {
   });
 };
 
+  /**
+   * Gerencia o fim do drag and drop (reordenação ou movimento de tarefas)
+   * @param {DropResult} result - Resultado do drag
+   */
   const handleDragEnd = async (result: DropResult) => {
     const { source, destination, draggableId, type } = result;
     if (!destination) return;
@@ -95,12 +116,21 @@ const mergeGlobalTags = (newTags: string[]) => {
     await taskApi.move(draggableId, destination.droppableId);
   };
 
+  /**
+   * Cria um novo board
+   * @param {string} name - Nome do novo board
+   */
   const handleCreateBoard = async (name: string) => {
     await boardApi.create({ name });
     setBoardModalOpen(false);
     await loadBoards();
   };
 
+  /**
+   * Deleta um board e suas tarefas/colunas
+   * @param {string} boardId - ID do board
+   * @param {string} boardName - Nome do board (para confirmação)
+   */
   const handleDeleteBoard = async (boardId: string, boardName: string) => {
     if (!confirm(`Apagar "${boardName}"? Todas as tarefas e colunas serão eliminadas.`)) return;
     try {
@@ -116,12 +146,21 @@ const mergeGlobalTags = (newTags: string[]) => {
     }
   };
 
+  /**
+   * Cria uma nova coluna no board ativo
+   * @param {string} name - Nome da coluna
+   * @param {string} color - Cor da coluna (formato hex)
+   */
   const handleCreateColumn = async (name: string, color: string) => {
     if (!activeBoard) return;
     await columnApi.create(activeBoard.id, { name, color });
     await loadBoards();
   };
 
+  /**
+   * Deleta uma coluna do board ativo
+   * @param {string} columnId - ID da coluna
+   */
   const handleDeleteColumn = async (columnId: string) => {
     if (!activeBoard) return;
     try {

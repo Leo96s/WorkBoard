@@ -6,8 +6,11 @@ interface Props {
   onClose: () => void;
   onSave: (name: string) => void;
 }
-
-export default function BoardModal({ onClose, onSave }: Props) {
+/**
+ * Modal para criar um novo board
+ * @param {Function} onClose - Função chamada ao fechar o modal sem salvar
+ * @param {Function} onSave - Função chamada ao criar um novo board com o nome
+ */export default function BoardModal({ onClose, onSave }: Props) {
   const [name, setName] = useState("");
 
   return (
