@@ -1,3 +1,5 @@
+## v0.5.1 - 2026-05-31
+* docs: criado documentação para todos os métodos implementados
 ## v0.5.0 - 2026-05-30
 * feat: adicionado requisistos e use cases
 ## v0.4.0 - 2026-05-30
