@@ -1,3 +1,5 @@
+## v0.5.2 - 2026-06-01
+* fix: corrigido estrututra do frontend e resolvido um pequeno erro no sync
 ## v0.5.1 - 2026-05-31
 * docs: criado documentação para todos os métodos implementados
 ## v0.5.0 - 2026-05-30
