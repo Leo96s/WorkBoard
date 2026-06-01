@@ -1,18 +1,15 @@
-"use client";
-
-import { useState } from "react";
-
 interface Props {
+  name: string;
+  onNameChange: (value: string) => void;
   onClose: () => void;
-  onSave: (name: string) => void;
+  onSave: () => void;
 }
-/**
- * Modal para criar um novo board
- * @param {Function} onClose - Função chamada ao fechar o modal sem salvar
- * @param {Function} onSave - Função chamada ao criar um novo board com o nome
- */export default function BoardModal({ onClose, onSave }: Props) {
-  const [name, setName] = useState("");
 
+/**
+ * Modal para criar um novo board - Apresentação pura
+ * Toda lógica é gerenciada pelo parent
+ */
+export default function BoardModal({ name, onNameChange, onClose, onSave }: Props) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-xl w-[380px] p-6">
@@ -21,8 +18,8 @@ interface Props {
         <input
           autoFocus
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && name.trim() && onSave(name.trim())}
+          onChange={(e) => onNameChange(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && name.trim() && onSave()}
           placeholder="Nome do board..."
           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
@@ -35,7 +32,7 @@ interface Props {
             Cancelar
           </button>
           <button
-            onClick={() => name.trim() && onSave(name.trim())}
+            onClick={onSave}
             disabled={!name.trim()}
             className="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-40"
           >

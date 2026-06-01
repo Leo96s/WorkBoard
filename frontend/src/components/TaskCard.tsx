@@ -1,5 +1,3 @@
-"use client";
-
 import { Draggable } from "@hello-pangea/dnd";
 import { TaskCard as ITask, BoardColumn } from "@/types";
 import { tagColor } from "@/lib/tagColor";
@@ -14,13 +12,9 @@ interface Props {
 }
 
 /**
- * Cartão de tarefa exibível em uma coluna Kanban
- * @param {ITask} task - Dados da tarefa
- * @param {number} index - Índice da tarefa na lista
- * @param {BoardColumn[]} columns - Todas as colunas disponíveis
- * @param {Function} onEdit - Callback ao editar a tarefa
- * @param {Function} onDelete - Callback ao deletar a tarefa
- * @param {Function} onMove - Callback ao mover a tarefa para outra coluna
+ * Cartão de tarefa - Apresentação pura
+ * Exibe uma tarefa com suporte a drag and drop e interações
+ * Toda lógica é gerenciada pelo parent
  */
 export default function TaskCard({ task, index, columns, onEdit, onDelete, onMove }: Props) {
   return (
