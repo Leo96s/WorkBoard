@@ -480,30 +480,7 @@ Sim. Em **Boundary Value Analysis (BVA)** cada caso deve focar-se num único lim
 
 ---
 
-## Sumário de Testes
-
-### BoardService
-- **Total de Test Cases:** 11
-- **Testes Funcionais Positivos:** 7
-- **Testes Funcionais Negativos:** 4
-- **Prioridade P1:** 8
-- **Prioridade P2:** 3
-
-### TaskService
-- **Total de Test Cases:** 12
-- **Testes Funcionais Positivos:** 10
-- **Testes Funcionais Negativos:** 2
-- **Prioridade P1:** 8
-- **Prioridade P2:** 4
-
-### Total Projeto
-- **Total de Test Cases:** 23
-- **Cobertura Métodos:** 100%
-- **Recomendação:** Implementar com xUnit e Moq para .NET
-
----
-
-## Estrutura de Implementação Sugerida
+## Estrutura de Implementação 
 
 ```
 backend/Tests/
@@ -512,16 +489,14 @@ backend/Tests/
 │   ├── CreateTests.cs
 │   ├── DeleteTests.cs
 │   ├── ColumnTests.cs
-│   └── Fixtures/BoardServiceFixture.cs
 └── TaskServiceTests/
     ├── CreateTests.cs
     ├── UpdateTests.cs
     ├── FilterTests.cs
     ├── MoveTests.cs
-    └── Fixtures/TaskServiceFixture.cs
 ```
 
 ---
 
-**Versão:** 1.0.0
+**Versão:** 1.3.0
 **Última Atualização:** 02 de Junho 2026  
