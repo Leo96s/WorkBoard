@@ -1,3 +1,5 @@
+## v1.0.0 - 2026-06-02
+* BREAKING CHANGE: feito ultimas atualizações no projeto
 ## v0.5.2 - 2026-06-01
 * fix: corrigido estrututra do frontend e resolvido um pequeno erro no sync
 ## v0.5.1 - 2026-05-31
