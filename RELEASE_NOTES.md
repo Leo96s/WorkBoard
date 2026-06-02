@@ -1,3 +1,5 @@
+## v1.0.3 - 2026-06-02
+* fix: corrigido ficheiro de Test Cases
 ## v1.0.2 - 2026-06-02
 * fix: resolvido bug visual no readme
 ## v1.0.1 - 2026-06-02
