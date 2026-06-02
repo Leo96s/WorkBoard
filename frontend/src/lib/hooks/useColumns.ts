@@ -2,7 +2,7 @@ import { columnApi } from "@/lib/api";
 import { getRandomColor } from "@/lib/utils/colors";
 
 /**
- * Hook para gerenciar colunas
+ * Hook para gerir colunas
  * Responsável por criar e deletar colunas
  */
 export function useColumns() {

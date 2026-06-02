@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 /**
- * Hook para gerenciar tags globais
+ * Hook para gerir tags globais
  * Responsável por manter um registro de todas as tags usadas
  */
 export function useTags() {

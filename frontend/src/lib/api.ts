@@ -32,8 +32,12 @@ export const taskApi = {
    * @param {string} [filters.assignedTo] - Nome do responsável
    * @returns {Promise} Tarefas filtradas
    */
-  filter: (filters: { boardId?: string; columnId?: string; assignedTo?: string }) =>
-    api.get("/api/Tasks/filter", { params: filters }),
+  filter: (filters: {
+  boardId?: string;
+  columnId?: string;
+  search?: string;
+}) =>
+  api.get("/api/Tasks/filter", { params: filters }),
  
   /**
    * Filtra tarefas por board (e opcionalmente por responsável)
@@ -41,8 +45,10 @@ export const taskApi = {
    * @param {string} [assignedTo] - Nome do responsável (opcional)
    * @returns {Promise} Tarefas filtradas
    */
-  filterByBoard: (boardId: string, assignedTo?: string) =>
-    api.get("/api/Tasks/filter", { params: { boardId, assignedTo } }),
+  filterByBoard: (boardId: string, search?: string) =>
+  api.get("/api/Tasks/filter", {
+    params: { boardId, search },
+  }),
  
   /**
    * Obtém uma tarefa pelo ID

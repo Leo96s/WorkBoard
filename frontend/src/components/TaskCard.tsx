@@ -14,7 +14,7 @@ interface Props {
 /**
  * Cartão de tarefa - Apresentação pura
  * Exibe uma tarefa com suporte a drag and drop e interações
- * Toda lógica é gerenciada pelo parent
+ * Toda lógica é gerida pelo parent
  */
 export default function TaskCard({ task, index, columns, onEdit, onDelete, onMove }: Props) {
   return (
@@ -62,7 +62,14 @@ export default function TaskCard({ task, index, columns, onEdit, onDelete, onMov
           {/* Footer */}
           <div className="flex justify-between text-xs text-gray-400">
             <span>👤 {task.assignedTo || "—"}</span>
-            <span>{new Date(task.createdAt).toLocaleDateString("pt-PT")}</span>
+            <span>{new Date(task.createdAt).toLocaleString("pt-PT", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  })}
+           </span>
           </div>
 
           {/* Tags */}

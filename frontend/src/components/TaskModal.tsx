@@ -28,7 +28,7 @@ interface Props {
 /**
  * Modal para criar ou editar tarefa - Apresentação pura
  * Gerencia todo o formulário e interações com tags
- * Toda lógica de estado é gerenciada pelo parent
+ * Toda lógica de estado é gerida pelo parent
  */
 export default function TaskModal({
   task,
@@ -73,7 +73,7 @@ export default function TaskModal({
             onChange={(e) => onTitleChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && onSave()}
             placeholder="Título da tarefa..."
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="border  text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
@@ -87,7 +87,7 @@ export default function TaskModal({
             onChange={(e) => onDescriptionChange(e.target.value)}
             placeholder="Descrição opcional..."
             rows={3}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+            className="border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
           />
         </div>
 
@@ -101,7 +101,7 @@ export default function TaskModal({
               value={assignedTo}
               onChange={(e) => onAssignedToChange(e.target.value)}
               placeholder="Nome..."
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
 
@@ -112,7 +112,7 @@ export default function TaskModal({
             <select
               value={columnId}
               onChange={(e) => onColumnIdChange(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+              className="border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
             >
               {columns.map((col) => (
                 <option key={col.id} value={col.id}>
@@ -133,7 +133,7 @@ export default function TaskModal({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
+                  className={`inline-flex text-gray-900 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
                 >
                   {tag}
                   <button onClick={() => onRemoveTag(tag)} className="hover:opacity-60 transition">
@@ -159,12 +159,12 @@ export default function TaskModal({
                   if (e.key === "Escape") onShowTagDropdown(false);
                 }}
                 placeholder="Nova tag ou pesquisar..."
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="flex-1 border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <button
                 onClick={() => onAddTag(tagInput)}
                 disabled={!tagInput.trim()}
-                className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-40 transition"
+                className="px-3 py-2 text-sm text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg disabled:opacity-40 transition"
               >
                 + Adicionar
               </button>
@@ -177,7 +177,7 @@ export default function TaskModal({
                   <button
                     key={tag}
                     onClick={() => onAddTag(tag)}
-                    className="block w-full text-left px-3 py-2 text-sm hover:bg-blue-50 transition"
+                    className="block text-gray-900 w-full text-left px-3 py-2 text-sm hover:bg-blue-50 transition"
                   >
                     {tag}
                   </button>

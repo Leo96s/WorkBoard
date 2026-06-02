@@ -20,7 +20,7 @@ import BoardModal from "@/components/BoardModal";
  * Gerencia boards, colunas e tarefas com suporte a drag and drop
  */
 export default function Home() {
-  // Hooks para gerenciamento de estado
+  // Hooks para gestão de estado
   const {
     boards,
     activeBoard,
@@ -31,6 +31,7 @@ export default function Home() {
   const {
     tasks,
     loadTasks,
+    searchTasks,
     createTask,
     updateTask,
     deleteTask,
@@ -40,6 +41,8 @@ export default function Home() {
 
   const { createColumn, deleteColumn } = useColumns();
   const { globalTags, mergeGlobalTags } = useTags();
+
+  const [assignedToFilter, setAssignedToFilter] = useState("");
 
   const {
     taskModalOpen,
@@ -87,7 +90,8 @@ export default function Home() {
         >
           {/* HEADER */}
           <div className="mb-6">
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
               {/* DROPDOWN DE BOARDS */}
               <div ref={dropdownRef} className="relative">
                 <button
@@ -168,9 +172,28 @@ export default function Home() {
               </button>
             </div>
 
-            <h1 className="text-3xl font-bold">{activeBoard?.name ?? "Boards"}</h1>
+            <h1 className="text-3xl text-gray-900 font-bold">{activeBoard?.name ?? "Boards"}</h1>
           </div>
+          <input
+  type="text"
+  placeholder="Pesquisar responsável ou tag..."
+  value={assignedToFilter}
+  onChange={async (e) => {
+    const value = e.target.value;
 
+    setAssignedToFilter(value);
+
+    if (!activeBoard) return;
+
+    if (value.trim() === "") {
+      await loadTasks(activeBoard.id);
+    } else {
+      await searchTasks(activeBoard.id, value);
+    }
+  }}
+  className="w-64 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+/>
+          </div>
           {/* KANBAN */}
           <div className="overflow-x-auto pb-6 flex-1">
             <Droppable droppableId="columns-list" direction="horizontal" type="COLUMN">
@@ -190,7 +213,7 @@ export default function Home() {
                         >
                           <KanbanColumn
                             column={col}
-                            tasks={tasks.filter(t => t.columnId === col.id)}
+                            tasks={tasks.filter((t) => t.columnId === col.id)}
                             columns={columns}
                             dragHandleProps={provided.dragHandleProps}
                             onAdd={openNewTaskModal}
@@ -281,7 +304,7 @@ export default function Home() {
                 }
               }}
               placeholder="Nome da coluna..."
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <div className="flex justify-end gap-2 mt-4">
               <button
@@ -318,7 +341,7 @@ export default function Home() {
   }
 }
 
-// Wrapper do TaskModal para gerenciar estado local do modal
+// Wrapper do TaskModal para gerir estado local do modal
 function TaskModalWithLogic({
   task,
   columns,

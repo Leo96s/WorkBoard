@@ -1,5 +1,5 @@
 ﻿using backend.DTOs;
-using backend.Model;
+using backend.Models;
 using backend.Repositories;
 
 namespace backend.Services
@@ -102,7 +102,7 @@ namespace backend.Services
         /// <param name="columnId">ID da coluna (opcional)</param>
         /// <param name="assignedTo">Nome do responsável (opcional)</param>
         /// <returns>Enumeração de tarefas que correspondem aos filtros</returns>
-        public IEnumerable<TaskCard> Filter(Guid? boardId, Guid? columnId, string? assignedTo)
-            => _repository.Filter(boardId, columnId, assignedTo);
+        public IEnumerable<TaskCard> Filter(Guid? boardId,Guid? columnId, string? search)
+             => _repository.Filter(boardId, columnId, search);
     }
 }

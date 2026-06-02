@@ -17,7 +17,7 @@ interface Props {
 /**
  * Coluna Kanban - Apresentação pura
  * Exibe tarefas em uma coluna com suporte a drag and drop
- * Toda lógica é gerenciada pelo parent
+ * Toda lógica é gerida pelo parent
  */
 export default function KanbanColumn({
   column,

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Hook para gerenciar o estado do dropdown de boards
+ * Hook para gerir o estado do dropdown de boards
  * Responsável por abrir, fechar e detectar cliques fora
  */
 export function useBoardDropdown() {

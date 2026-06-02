@@ -1,6 +1,4 @@
-﻿using backend.Enum;
-using backend.Model;
-using System.Xml.Linq;
+﻿using backend.Models;
 
 namespace backend.Repositories
 {
@@ -69,14 +67,21 @@ namespace backend.Repositories
         /// </summary>
         /// <param name="boardId">ID do board (opcional)</param>
         /// <param name="columnId">ID da coluna (opcional)</param>
-        /// <param name="assignedTo">Nome do responsável (opcional)</param>
+        /// <param name="search">Filtro ajustável entre responsável e tags (opcional)</param>
         /// <returns>Lista de tarefas que correspondem aos filtros especificados</returns>
-        public IEnumerable<TaskCard> Filter(Guid? boardId, Guid? columnId, string? assignedTo)
+        public IEnumerable<TaskCard> Filter(Guid? boardId, Guid? columnId, string? search)
         {
             return _tasks.Where(t =>
                 (!boardId.HasValue || t.BoardId == boardId.Value) &&
                 (!columnId.HasValue || t.ColumnId == columnId.Value) &&
-                (string.IsNullOrEmpty(assignedTo) || t.AssignedTo == assignedTo)
+                (
+                    string.IsNullOrWhiteSpace(search)
+                    ||
+                    t.AssignedTo.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    ||
+                    t.Tags.Any(tag =>
+                        tag.Contains(search, StringComparison.OrdinalIgnoreCase))
+                )
             );
         }
     }

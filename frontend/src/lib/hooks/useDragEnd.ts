@@ -3,12 +3,12 @@ import { DropResult } from "@hello-pangea/dnd";
 import { taskApi } from "@/lib/api";
 
 /**
- * Hook para gerenciar o fim do drag and drop
+ * Hook para gerir o fim do drag and drop
  * Responsável por reordenar boards, colunas e mover tarefas
  */
 export function useDragEnd() {
   /**
-   * Gerencia o fim do drag and drop
+   * Gere o fim do drag and drop
    */
   const handleDragEnd = async (
     result: DropResult,

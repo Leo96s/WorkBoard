@@ -1,5 +1,4 @@
 ﻿using backend.DTOs;
-using backend.Enum;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -100,9 +99,9 @@ namespace backend.Controllers
         public IActionResult Filter(
             [FromQuery] Guid? boardId,
             [FromQuery] Guid? columnId,
-            [FromQuery] string? assignedTo)
+            [FromQuery] string? search)
         {
-            return Ok(_service.Filter(boardId, columnId, assignedTo));
+            return Ok(_service.Filter(boardId, columnId, search));
         }
     }
 

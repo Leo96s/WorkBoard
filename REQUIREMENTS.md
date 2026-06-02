@@ -137,5 +137,5 @@ Documento de rastreamento dos requisitos funcionais implementados no projeto Wor
 
 ---
 
-**Última Atualização**: 30 de Maio de 2026  
-**Versão do Projeto**: v0.3.0
+**Última Atualização**: 2 de Junho de 2026  
+**Versão do Projeto**: v1.0.0

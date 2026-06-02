@@ -14,6 +14,69 @@ Um quadro de tarefas em estilo **Kanban** que permite às equipas organizar o tr
 
 ---
 
+## Decisões Tomadas
+
+Durante o desenvolvimento deste projeto foram tomadas algumas decisões técnicas com o objetivo de manter a solução simples, focada nos requisitos propostos e rápida de executar por qualquer pessoa que a queira avaliar.
+
+### Utilização de Persistência em Memória
+
+Foi escolhida uma implementação **In-Memory** em vez de uma base de dados tradicional.
+
+O enunciado indicava explicitamente que a persistência poderia ser feita em memória e, tratando-se de uma demonstração técnica, a utilização de uma base de dados introduziria complexidade adicional no setup (instalação, configuração, migrações e gestão de ligações) sem acrescentar valor relevante para os objetivos da avaliação.
+
+Desta forma, a aplicação pode ser executada imediatamente após o arranque do backend, permitindo focar a avaliação na arquitetura da API, na organização do código e na implementação das funcionalidades solicitadas.
+
+### Utilização de Basic Authentication
+
+Foi utilizada **Basic Authentication** com credenciais fixas em vez de JWT.
+
+O desafio não requeria registo de utilizadores, gestão de contas, refresh tokens ou sessões. O objetivo era apenas demonstrar a proteção dos endpoints da API através de um mecanismo de autenticação simples.
+
+A utilização de JWT acrescentaria componentes que não eram necessários para o contexto deste projeto, como endpoints de login, geração de tokens, gestão de expiração e armazenamento dos mesmos no frontend.
+
+Assim, a Basic Authentication permite cumprir o requisito de segurança pedido de forma mais simples e adequada à dimensão da aplicação.
+
+### Arquitetura em Camadas
+
+O backend foi organizado utilizando uma separação clara de responsabilidades:
+
+* **Controllers** para exposição dos endpoints REST.
+* **Services** para a lógica de negócio.
+* **Repositories** para abstração da camada de dados.
+* **DTOs** para comunicação entre cliente e servidor.
+
+Esta abordagem facilita a manutenção, evolução e testabilidade da aplicação.
+
+### Utilização de Repositórios In-Memory
+
+Mesmo utilizando persistência em memória, foi mantida uma camada de repositórios através de interfaces.
+
+Isto permite que, futuramente, a aplicação possa ser migrada para uma base de dados real com impacto mínimo na lógica de negócio, bastando substituir as implementações dos repositórios.
+
+### Interface Kanban Simples e Funcional
+
+O frontend foi desenvolvido com foco na simplicidade e usabilidade, privilegiando uma experiência semelhante a um quadro Kanban tradicional.
+
+Foram implementadas as funcionalidades pedidas no desafio:
+
+* Visualização das colunas do quadro.
+* Criação e edição de cartões.
+* Movimentação de cartões entre colunas.
+* Filtragem por responsável.
+* Integração com a API protegida por autenticação.
+
+Adicionalmente, foi implementado suporte para interação mais intuitiva através de drag-and-drop para movimentação dos cartões entre colunas.
+
+### Funcionalidades Extra
+
+Embora não fossem requisitos obrigatórios, foram adicionadas algumas funcionalidades para melhorar a experiência de utilização:
+
+* Suporte a múltiplos boards.
+* Organização dos cartões por tags.
+* Interface modal para criação e edição de elementos.
+* Estrutura preparada para futura expansão da aplicação.
+
+
 ## 🚀 Guia de Instalação e Execução
 
 ### Pré-requisitos
@@ -59,13 +122,18 @@ WorkBoard/
 │   │   ├── app/                  # Layout e página principal
 │   │   ├── components/           # Componentes React
 │   │   ├── lib/                  # Utilitários (API client, cores)
+│   │   │   │ 
+│   │   │   ├── hooks/            # Hooks criados para o projeto
+│   │   │   └── utils/            # Métodos utilitários do projeto
 │   │   └── types/                # TypeScript interfaces
-│   ├── .env.local                # ⚠️ FICHEIRO CRÍTICO (não incluído no git)
+│   ├── .env                      # ⚠️ FICHEIRO CRÍTICO (não incluído no git)
 │   ├── package.json              # Dependências npm
 │   ├── next.config.ts            # Configuração Next.js
 │   └── tsconfig.json             # Configuração TypeScript
 │
 ├── REQUIREMENTS.md               # Requisitos do projeto
+├── USECASES.md                   # Use Cases do projeto
+├── TEST_CASES.md                 # Documentação dos testes implementados no projeto
 ├── README.md                     # Este ficheiro
 ├── CHANGELOG.md                  # Histórico de versões
 └── LICENSE

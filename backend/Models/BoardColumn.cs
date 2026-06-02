@@ -1,6 +1,4 @@
-﻿using backend.Model;
-
-namespace backend.Models
+﻿namespace backend.Models
 {
     public class BoardColumn
     {

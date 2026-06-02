@@ -7,7 +7,7 @@ interface Props {
 
 /**
  * Modal para criar um novo board - Apresentação pura
- * Toda lógica é gerenciada pelo parent
+ * Toda lógica é gerida pelo parent
  */
 export default function BoardModal({ name, onNameChange, onClose, onSave }: Props) {
   return (
@@ -21,7 +21,7 @@ export default function BoardModal({ name, onNameChange, onClose, onSave }: Prop
           onChange={(e) => onNameChange(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && name.trim() && onSave()}
           placeholder="Nome do board..."
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
         <div className="flex justify-end gap-2 mt-4">

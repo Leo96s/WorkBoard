@@ -3,7 +3,7 @@ import { TaskCard, UpdateTaskDto, CreateTaskDto } from "@/types";
 import { taskApi } from "@/lib/api";
 
 /**
- * Hook para gerenciar tarefas
+ * Hook para gerir tarefas
  * Responsável por carregar, atualizar, deletar e mover tarefas
  */
 export function useTasks(boardId: string | null) {
@@ -16,6 +16,21 @@ export function useTasks(boardId: string | null) {
     const res = await taskApi.filterByBoard(id);
     setTasks(res.data);
   };
+
+  /**
+ * Pesquisa tarefas por responsável ou tag
+ */
+const searchTasks = async (
+  id: string,
+  search: string
+) => {
+  const res = await taskApi.filter({
+    boardId: id,
+    search,
+  });
+
+  setTasks(res.data);
+};
 
   /**
    * Cria uma nova tarefa
@@ -75,5 +90,6 @@ export function useTasks(boardId: string | null) {
     deleteTask,
     moveTask,
     updateTaskLocally,
+    searchTasks,
   };
 }

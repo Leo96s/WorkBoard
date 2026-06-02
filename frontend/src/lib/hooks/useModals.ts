@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TaskCard } from "@/types";
 
 /**
- * Hook para gerenciar o estado dos modais
+ * Hook para gerir o estado dos modais
  * Responsável por abrir, fechar e controlar os modais da aplicação
  */
 export function useModals() {

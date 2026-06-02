@@ -1,7 +1,4 @@
-﻿using backend.Enum;
-using backend.Models;
-
-namespace backend.Model
+﻿namespace backend.Models
 {
     public class TaskCard
     {

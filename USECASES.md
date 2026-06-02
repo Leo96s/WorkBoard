@@ -252,5 +252,5 @@ sequenceDiagram
 
 ---
 
-**Última Atualização**: 30 de Maio de 2026  
-**Versão**: v0.3.0
+**Última Atualização**: 2 de Junho de 2026  
+**Versão**: v1.0.0

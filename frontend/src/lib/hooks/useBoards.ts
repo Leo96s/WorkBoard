@@ -3,8 +3,8 @@ import { Board } from "@/types";
 import { boardApi } from "@/lib/api";
 
 /**
- * Hook para gerenciar boards
- * Responsável por carregar, atualizar e gerenciar o estado dos boards
+ * Hook para gerir boards
+ * Responsável por carregar, atualizar e gerir o estado dos boards
  */
 export function useBoards() {
   const [boards, setBoards] = useState<Board[]>([]);
