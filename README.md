@@ -408,7 +408,7 @@ npm install
 
 - [REQUIREMENTS.md](REQUIREMENTS.md) - Todos os requisitos implementados com descrições detalhadas
 - [USECASES.md](USECASES.md) - Diagramas de use cases em PlantUML para cada funcionalidade
-  [TEST_CASES.md](TEST_CASES.md.md) - Diagramas de testes feitos para o backend
+- [TEST_CASES.md](TEST_CASES.md) - Diagramas de testes feitos para o backend
 - [CHANGELOG.md](CHANGELOG.md) - Histórico de versões
 - [LICENSE](LICENSE) - Licença do projeto
 
