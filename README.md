@@ -408,6 +408,7 @@ npm install
 
 - [REQUIREMENTS.md](REQUIREMENTS.md) - Todos os requisitos implementados com descrições detalhadas
 - [USECASES.md](USECASES.md) - Diagramas de use cases em PlantUML para cada funcionalidade
+  [TEST_CASES.md](TEST_CASES.md.md) - Diagramas de testes feitos para o backend
 - [CHANGELOG.md](CHANGELOG.md) - Histórico de versões
 - [LICENSE](LICENSE) - Licença do projeto
 
@@ -430,5 +431,5 @@ Este projeto está licenciado sob a MIT License - veja o ficheiro [LICENSE](LICE
 
 ---
 
-**Versão Atual**: v0.3.0  
-**Última Atualização**: 30 de Maio de 2026 
+**Versão Atual**: v1.1.0  
+**Última Atualização**: 2 de Junho de 2026 
