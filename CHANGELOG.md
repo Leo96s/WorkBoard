@@ -1,3 +1,5 @@
+## v1.0.4 - 2026-06-06
+* fix: pequeno update de adição de interfaces
 ## v1.0.3 - 2026-06-02
 * fix: corrigido ficheiro de Test Cases
 ## v1.0.2 - 2026-06-02
