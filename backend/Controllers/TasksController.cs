@@ -8,7 +8,7 @@ namespace backend.Controllers
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        private readonly TaskService _service;
+        private readonly ITaskService _service;
 
         /// <summary>
         /// Inicializa uma nova instância do TasksController com o serviço de tarefas

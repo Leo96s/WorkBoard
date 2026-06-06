@@ -7,7 +7,7 @@ namespace backend.Services
     /// <summary>
     /// Serviço de negócio para gerenciar operações de boards e suas colunas
     /// </summary>
-    public class BoardService
+    public class BoardService : IBoardService
     {
         private readonly IBoardRepository _boardRepository;
         private readonly IBoardColumnRepository _columnRepository;

@@ -7,7 +7,7 @@ namespace backend.Services
     /// <summary>
     /// Serviço de negócio para gerenciar operações de tarefas
     /// </summary>
-    public class TaskService
+    public class TaskService : ITaskService
     {
         private readonly ITaskRepository _repository;
 

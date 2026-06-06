@@ -8,7 +8,7 @@ namespace backend.Controllers
     [Route("api/boards")]
     public class BoardsController : ControllerBase
     {
-        private readonly BoardService _service;
+        private readonly IBoardService _service;
 
         /// <summary>
         /// Inicializa uma nova instância do BoardsController com o serviço de boards
