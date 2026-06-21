@@ -1,3 +1,5 @@
+## v1.0.5 - 2026-06-21
+* fix: corrigindo alguns erros de negócio
 ## v1.0.4 - 2026-06-06
 * fix: pequeno update de adição de interfaces
 ## v1.0.3 - 2026-06-02
