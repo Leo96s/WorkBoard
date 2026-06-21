@@ -25,8 +25,8 @@ builder.Services.AddSingleton<IBoardRepository, InMemoryBoardRepository>();
 builder.Services.AddSingleton<IBoardColumnRepository, InMemoryBoardColumnRepository>();
 
 // Services
-builder.Services.AddSingleton<TaskService>();
-builder.Services.AddSingleton<BoardService>();
+builder.Services.AddSingleton<ITaskService, TaskService>();
+builder.Services.AddSingleton<IBoardService, BoardService>();
 
 
 builder.Services.AddSwaggerGen(options =>
