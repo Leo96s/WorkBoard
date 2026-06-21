@@ -4,8 +4,12 @@ using backend.Services;
 using DotNetEnv;
 using Microsoft.OpenApi.Models;
 
-Env.Load();
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsDevelopment())
+{
+    DotNetEnv.Env.Load();
+}
 
 builder.Services.AddCors(options =>
 {
