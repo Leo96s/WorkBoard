@@ -1,3 +1,5 @@
+## v1.0.7 - 2026-06-21
+* fix: criado dockerfile para deploy do projeto
 ## v1.0.6 - 2026-06-21
 * fix: corrigido um erro na chamada das interfaces
 ## v1.0.5 - 2026-06-21
