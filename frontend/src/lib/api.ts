@@ -1,16 +1,8 @@
 import axios from "axios";
 import { CreateTaskDto, UpdateTaskDto, CreateBoardDto, CreateColumnDto, UpdateColumnDto } from "@/types";
  
-const credentials = btoa(
-  `${process.env.NEXT_PUBLIC_AUTH_USER}:${process.env.NEXT_PUBLIC_AUTH_PASS}`
-);
- 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    Authorization: `Basic ${credentials}`,
-    "Content-Type": "application/json",
-  },
+  baseURL: "/api/proxy",
 });
 
 /**

@@ -64,7 +64,7 @@ app.UseSwaggerUI();
 
 app.UseMiddleware<BasicAuthMiddleware>();
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
 }
