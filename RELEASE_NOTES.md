@@ -1,3 +1,5 @@
+## v1.0.8 - 2026-06-24
+* fix: corrigindo pequenos erros para o deploy funcionar
 ## v1.0.7 - 2026-06-21
 * fix: criado dockerfile para deploy do projeto
 ## v1.0.6 - 2026-06-21
