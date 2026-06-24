@@ -1,3 +1,5 @@
+## v1.0.9 - 2026-06-24
+* fix: retirado o handler pois o vercel nao deteta
 ## v1.0.8 - 2026-06-24
 * fix: corrigindo pequenos erros para o deploy funcionar
 ## v1.0.7 - 2026-06-21
