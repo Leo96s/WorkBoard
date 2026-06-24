@@ -14,7 +14,7 @@ export const taskApi = {
    * @returns {Promise} Todas as tarefas
    */
   getAll: () =>
-    api.get("/api/Tasks"),
+    api.get("/Tasks"),
  
   /**
    * Filtra tarefas por board, coluna e/ou responsável
@@ -29,7 +29,7 @@ export const taskApi = {
   columnId?: string;
   search?: string;
 }) =>
-  api.get("/api/Tasks/filter", { params: filters }),
+  api.get("/Tasks/filter", { params: filters }),
  
   /**
    * Filtra tarefas por board (e opcionalmente por responsável)
@@ -38,7 +38,7 @@ export const taskApi = {
    * @returns {Promise} Tarefas filtradas
    */
   filterByBoard: (boardId: string, search?: string) =>
-  api.get("/api/Tasks/filter", {
+  api.get("/Tasks/filter", {
     params: { boardId, search },
   }),
  
@@ -48,7 +48,7 @@ export const taskApi = {
    * @returns {Promise} Tarefa encontrada
    */
   getById: (id: string) =>
-    api.get(`/api/Tasks/${id}`),
+    api.get(`/Tasks/${id}`),
  
   /**
    * Cria uma nova tarefa
@@ -56,7 +56,7 @@ export const taskApi = {
    * @returns {Promise} Tarefa criada
    */
   create: (data: CreateTaskDto) =>
-    api.post("/api/Tasks", data),
+    api.post("/Tasks", data),
  
   /**
    * Atualiza uma tarefa existente
@@ -65,7 +65,7 @@ export const taskApi = {
    * @returns {Promise} Tarefa atualizada
    */
   update: (id: string, data: UpdateTaskDto) =>
-    api.put(`/api/Tasks/${id}`, data),
+    api.put(`/Tasks/${id}`, data),
  
   /**
    * Move uma tarefa para outra coluna
@@ -74,7 +74,7 @@ export const taskApi = {
    * @returns {Promise} Tarefa movida
    */
   move: (id: string, newColumnId: string) =>
-    api.patch(`/api/Tasks/${id}/move`, { newColumnId }),
+    api.patch(`/Tasks/${id}/move`, { newColumnId }),
  
   /**
    * Deleta uma tarefa
@@ -82,7 +82,7 @@ export const taskApi = {
    * @returns {Promise} Resultado da deleção
    */
   delete: (id: string) =>
-    api.delete(`/api/Tasks/${id}`),
+    api.delete(`/Tasks/${id}`),
 };
 
 /**
@@ -94,7 +94,7 @@ export const boardApi = {
    * @returns {Promise} Todos os boards
    */
   getAll: () =>
-    api.get("/api/boards"),
+    api.get("/boards"),
  
   /**
    * Obtém um board pelo ID
@@ -102,7 +102,7 @@ export const boardApi = {
    * @returns {Promise} Board encontrado
    */
   getById: (id: string) =>
-    api.get(`/api/boards/${id}`),
+    api.get(`/boards/${id}`),
  
   /**
    * Cria um novo board
@@ -110,7 +110,7 @@ export const boardApi = {
    * @returns {Promise} Board criado
    */
   create: (data: CreateBoardDto) =>
-    api.post("/api/boards", data),
+    api.post("/boards", data),
  
   /**
    * Deleta um board
@@ -118,7 +118,7 @@ export const boardApi = {
    * @returns {Promise} Resultado da deleção
    */
   delete: (id: string) =>
-    api.delete(`/api/boards/${id}`),
+    api.delete(`/boards/${id}`),
 };
 
 /**
@@ -132,7 +132,7 @@ export const columnApi = {
    * @returns {Promise} Coluna criada
    */
   create: (boardId: string, data: CreateColumnDto) =>
-    api.post(`/api/boards/${boardId}/columns`, data),
+    api.post(`/boards/${boardId}/columns`, data),
  
   /**
    * Atualiza uma coluna existente
@@ -142,7 +142,7 @@ export const columnApi = {
    * @returns {Promise} Coluna atualizada
    */
   update: (boardId: string, columnId: string, data: UpdateColumnDto) =>
-    api.put(`/api/boards/${boardId}/columns/${columnId}`, data),
+    api.put(`/boards/${boardId}/columns/${columnId}`, data),
  
   /**
    * Deleta uma coluna
@@ -151,5 +151,5 @@ export const columnApi = {
    * @returns {Promise} Resultado da deleção
    */
   delete: (boardId: string, columnId: string) =>
-    api.delete(`/api/boards/${boardId}/columns/${columnId}`),
+    api.delete(`/boards/${boardId}/columns/${columnId}`),
 };
