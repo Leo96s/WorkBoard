@@ -14,7 +14,7 @@ namespace backend.Controllers
         /// Inicializa uma nova instância do BoardsController com o serviço de boards
         /// </summary>
         /// <param name="service">Serviço de negócio para operações de boards</param>
-        public BoardsController(BoardService service)
+        public BoardsController(IBoardService service)
         {
             _service = service;
         }

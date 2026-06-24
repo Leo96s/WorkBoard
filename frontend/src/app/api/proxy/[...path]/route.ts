@@ -1,15 +1,21 @@
 import { NextRequest } from "next/server";
 
-const API_URL = process.env.API_URL; // sem NEXT_PUBLIC_
+const API_URL = process.env.API_URL;
 const AUTH_USER = process.env.AUTH_USER;
 const AUTH_PASS = process.env.AUTH_PASS;
 
 async function handler(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const credentials = Buffer.from(`${AUTH_USER}:${AUTH_PASS}`).toString("base64");
 
-  const {path: pathSegments} = await params;
+  const { path: pathSegments } = await params;
   const path = pathSegments.join("/");
   const targetUrl = `${API_URL}/${path}${req.nextUrl.search}`;
+
+  // 👇 Adiciona isto temporariamente
+  console.log("=== PROXY DEBUG ===");
+  console.log("API_URL:", API_URL);
+  console.log("path segments:", pathSegments);
+  console.log("targetUrl:", targetUrl);
 
   const init: RequestInit = {
     method: req.method,
@@ -25,6 +31,10 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
 
   const res = await fetch(targetUrl, init);
   const data = await res.text();
+
+  // 👇 E isto
+  console.log("backend status:", res.status);
+  console.log("backend response:", data);
 
   return new Response(data, {
     status: res.status,

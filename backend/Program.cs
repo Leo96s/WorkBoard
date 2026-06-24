@@ -25,12 +25,13 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-// Repositories (sem duplicados)
+
+
 builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepository>();
 builder.Services.AddSingleton<IBoardRepository, InMemoryBoardRepository>();
 builder.Services.AddSingleton<IBoardColumnRepository, InMemoryBoardColumnRepository>();
 
-// Services
+
 builder.Services.AddSingleton<ITaskService, TaskService>();
 builder.Services.AddSingleton<IBoardService, BoardService>();
 

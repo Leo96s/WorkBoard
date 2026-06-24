@@ -14,7 +14,7 @@ namespace backend.Controllers
         /// Inicializa uma nova instância do TasksController com o serviço de tarefas
         /// </summary>
         /// <param name="service">Serviço de negócio para operações de tarefas</param>
-        public TasksController(TaskService service)
+        public TasksController(ITaskService service)
         {
             _service = service;
         }
