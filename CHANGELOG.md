@@ -1,3 +1,5 @@
+## v1.2.0 - 2026-07-18
+* feat: persiste reorder de boards e colunas no frontend
 ## v1.1.6 - 2026-07-18
 * fix: corrige resposta 204 no proxy, remove logs de debug e trata falhas de rede
 ## v1.1.5 - 2026-07-18
