@@ -1,4 +1,5 @@
 using backend.DTOs;
+using backend.Models;
 using backend.Repositories;
 using backend.Services;
 using Moq;
@@ -9,12 +10,25 @@ namespace backend.Tests.TaskServiceTests
     public class CreateTests
     {
         private readonly Mock<ITaskRepository> _taskRepositoryMock;
+        private readonly Mock<IBoardRepository> _boardRepositoryMock;
+        private readonly Mock<IBoardColumnRepository> _columnRepositoryMock;
         private readonly TaskService _taskService;
 
         public CreateTests()
         {
             _taskRepositoryMock = new Mock<ITaskRepository>();
-            _taskService = new TaskService(_taskRepositoryMock.Object);
+            _boardRepositoryMock = new Mock<IBoardRepository>();
+            _columnRepositoryMock = new Mock<IBoardColumnRepository>();
+            _taskService = new TaskService(_taskRepositoryMock.Object, _boardRepositoryMock.Object, _columnRepositoryMock.Object);
+        }
+
+        /// <summary>
+        /// Configura board e coluna válidos e pertencentes um ao outro, para os testes de "caminho feliz"
+        /// </summary>
+        private void SetupValidBoardAndColumn(Guid boardId, Guid columnId)
+        {
+            _boardRepositoryMock.Setup(r => r.GetById(boardId)).Returns(new Board { Id = boardId });
+            _columnRepositoryMock.Setup(r => r.GetById(columnId)).Returns(new BoardColumn { Id = columnId, BoardId = boardId });
         }
 
         /// <summary>
@@ -41,11 +55,13 @@ namespace backend.Tests.TaskServiceTests
             };
 
             _taskRepositoryMock.Setup(r => r.Add(It.IsAny<Models.TaskCard>())).Callback<Models.TaskCard>(t => t.Id = taskId);
+            SetupValidBoardAndColumn(boardId, columnId);
 
             // Act
-            var result = _taskService.Create(dto);
+            var (result, opResult) = _taskService.Create(dto);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             Assert.NotNull(result);
             Assert.NotEqual(Guid.Empty, result.Id);
             Assert.Equal("Implementar Login", result.Title);
@@ -80,11 +96,13 @@ namespace backend.Tests.TaskServiceTests
             };
 
             _taskRepositoryMock.Setup(r => r.Add(It.IsAny<Models.TaskCard>())).Callback<Models.TaskCard>(t => t.Id = taskId);
+            SetupValidBoardAndColumn(boardId, columnId);
 
             // Act
-            var result = _taskService.Create(dto);
+            var (result, opResult) = _taskService.Create(dto);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             Assert.NotNull(result);
             Assert.Equal("", result.Title);
         }
@@ -111,11 +129,13 @@ namespace backend.Tests.TaskServiceTests
             };
 
             _taskRepositoryMock.Setup(r => r.Add(It.IsAny<Models.TaskCard>())).Callback<Models.TaskCard>(t => t.Id = taskId);
+            SetupValidBoardAndColumn(boardId, columnId);
 
             // Act
-            var result = _taskService.Create(dto);
+            var (result, opResult) = _taskService.Create(dto);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             Assert.NotNull(result);
             Assert.Equal(4, result.Tags.Count);
             Assert.Contains("bug", result.Tags);
@@ -146,16 +166,19 @@ namespace backend.Tests.TaskServiceTests
 
             Models.TaskCard? capturedTask = null;
             _taskRepositoryMock.Setup(r => r.Add(It.IsAny<Models.TaskCard>()))
-                .Callback<Models.TaskCard>(t => 
+                .Callback<Models.TaskCard>(t =>
                 {
                     t.Id = taskId;
                     capturedTask = t;
                 });
+            SetupValidBoardAndColumn(boardId, columnId);
 
             // Act
-            var result = _taskService.Create(dto);
+            var (result, opResult) = _taskService.Create(dto);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
+            Assert.NotNull(result);
             _taskRepositoryMock.Verify(r => r.Add(It.IsAny<Models.TaskCard>()), Times.Once());
             Assert.NotNull(capturedTask);
             Assert.Equal(result.Id, capturedTask.Id);

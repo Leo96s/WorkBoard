@@ -10,12 +10,16 @@ namespace backend.Tests.TaskServiceTests
     public class UpdateTests
     {
         private readonly Mock<ITaskRepository> _taskRepositoryMock;
+        private readonly Mock<IBoardRepository> _boardRepositoryMock;
+        private readonly Mock<IBoardColumnRepository> _columnRepositoryMock;
         private readonly TaskService _taskService;
 
         public UpdateTests()
         {
             _taskRepositoryMock = new Mock<ITaskRepository>();
-            _taskService = new TaskService(_taskRepositoryMock.Object);
+            _boardRepositoryMock = new Mock<IBoardRepository>();
+            _columnRepositoryMock = new Mock<IBoardColumnRepository>();
+            _taskService = new TaskService(_taskRepositoryMock.Object, _boardRepositoryMock.Object, _columnRepositoryMock.Object);
         }
 
         /// <summary>
@@ -53,12 +57,14 @@ namespace backend.Tests.TaskServiceTests
 
             _taskRepositoryMock.Setup(r => r.GetById(taskId)).Returns(originalTask);
             _taskRepositoryMock.Setup(r => r.Update(It.IsAny<TaskCard>()));
+            _columnRepositoryMock.Setup(r => r.GetById(col2Id)).Returns(new BoardColumn { Id = col2Id, BoardId = boardId });
 
             // Act
-            _taskService.Update(taskId, updateDto);
+            var opResult = _taskService.Update(taskId, updateDto);
             var updated = _taskService.GetById(taskId);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             Assert.NotNull(updated);
             Assert.Equal("Novo Título da Tarefa", updated.Title);
             Assert.Equal("Nova descrição", updated.Description);
@@ -102,10 +108,11 @@ namespace backend.Tests.TaskServiceTests
             _taskRepositoryMock.Setup(r => r.Update(It.IsAny<TaskCard>()));
 
             // Act
-            _taskService.Update(taskId, updateDto);
+            var opResult = _taskService.Update(taskId, updateDto);
             var updated = _taskService.GetById(taskId);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             Assert.NotNull(updated);
             Assert.Equal("Novo Título", updated.Title);
             Assert.Equal(columnId, updated.ColumnId); // ColumnId mantém-se
@@ -133,9 +140,10 @@ namespace backend.Tests.TaskServiceTests
             _taskRepositoryMock.Setup(r => r.GetById(invalidTaskId)).Returns((TaskCard?)null);
 
             // Act
-            _taskService.Update(invalidTaskId, updateDto);
+            var opResult = _taskService.Update(invalidTaskId, updateDto);
 
             // Assert
+            Assert.Equal(TaskOperationResult.NotFound, opResult);
             _taskRepositoryMock.Verify(r => r.Update(It.IsAny<TaskCard>()), Times.Never());
         }
 
@@ -170,11 +178,12 @@ namespace backend.Tests.TaskServiceTests
             _taskRepositoryMock.Setup(r => r.Update(It.IsAny<TaskCard>()));
 
             // Act
-            _taskService.Update(taskId, updateDto);
+            var opResult = _taskService.Update(taskId, updateDto);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             _taskRepositoryMock.Verify(
-                r => r.Update(It.Is<TaskCard>(t => t.Id == taskId)), 
+                r => r.Update(It.Is<TaskCard>(t => t.Id == taskId)),
                 Times.Once()
             );
         }

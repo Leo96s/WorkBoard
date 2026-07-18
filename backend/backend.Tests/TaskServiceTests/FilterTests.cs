@@ -9,12 +9,16 @@ namespace backend.Tests.TaskServiceTests
     public class FilterTests
     {
         private readonly Mock<ITaskRepository> _taskRepositoryMock;
+        private readonly Mock<IBoardRepository> _boardRepositoryMock;
+        private readonly Mock<IBoardColumnRepository> _columnRepositoryMock;
         private readonly TaskService _taskService;
 
         public FilterTests()
         {
             _taskRepositoryMock = new Mock<ITaskRepository>();
-            _taskService = new TaskService(_taskRepositoryMock.Object);
+            _boardRepositoryMock = new Mock<IBoardRepository>();
+            _columnRepositoryMock = new Mock<IBoardColumnRepository>();
+            _taskService = new TaskService(_taskRepositoryMock.Object, _boardRepositoryMock.Object, _columnRepositoryMock.Object);
         }
 
         /// <summary>

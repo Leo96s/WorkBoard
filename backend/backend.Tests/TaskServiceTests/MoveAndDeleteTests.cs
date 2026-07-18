@@ -9,12 +9,16 @@ namespace backend.Tests.TaskServiceTests
     public class MoveAndDeleteTests
     {
         private readonly Mock<ITaskRepository> _taskRepositoryMock;
+        private readonly Mock<IBoardRepository> _boardRepositoryMock;
+        private readonly Mock<IBoardColumnRepository> _columnRepositoryMock;
         private readonly TaskService _taskService;
 
         public MoveAndDeleteTests()
         {
             _taskRepositoryMock = new Mock<ITaskRepository>();
-            _taskService = new TaskService(_taskRepositoryMock.Object);
+            _boardRepositoryMock = new Mock<IBoardRepository>();
+            _columnRepositoryMock = new Mock<IBoardColumnRepository>();
+            _taskService = new TaskService(_taskRepositoryMock.Object, _boardRepositoryMock.Object, _columnRepositoryMock.Object);
         }
 
         /// <summary>
@@ -41,18 +45,20 @@ namespace backend.Tests.TaskServiceTests
 
             _taskRepositoryMock.Setup(r => r.GetById(taskId)).Returns(task);
             _taskRepositoryMock.Setup(r => r.Update(It.IsAny<TaskCard>()));
+            _columnRepositoryMock.Setup(r => r.GetById(col2Id)).Returns(new BoardColumn { Id = col2Id, BoardId = boardId });
 
             // Act
-            _taskService.Move(taskId, col2Id);
+            var opResult = _taskService.Move(taskId, col2Id);
             var moved = _taskService.GetById(taskId);
 
             // Assert
+            Assert.Equal(TaskOperationResult.Success, opResult);
             Assert.NotNull(moved);
             Assert.Equal(col2Id, moved.ColumnId);
             Assert.Equal(taskId, moved.Id);
 
             _taskRepositoryMock.Verify(
-                r => r.Update(It.Is<TaskCard>(t => t.ColumnId == col2Id)), 
+                r => r.Update(It.Is<TaskCard>(t => t.ColumnId == col2Id)),
                 Times.Once()
             );
         }
@@ -83,6 +89,7 @@ namespace backend.Tests.TaskServiceTests
 
             _taskRepositoryMock.Setup(r => r.GetById(taskId)).Returns(task);
             _taskRepositoryMock.Setup(r => r.Update(It.IsAny<TaskCard>()));
+            _columnRepositoryMock.Setup(r => r.GetById(col2Id)).Returns(new BoardColumn { Id = col2Id, BoardId = boardId });
 
             // Act
             _taskService.Move(taskId, col2Id);
@@ -151,9 +158,10 @@ namespace backend.Tests.TaskServiceTests
             _taskRepositoryMock.Setup(r => r.GetById(invalidTaskId)).Returns((TaskCard?)null);
 
             // Act
-            _taskService.Move(invalidTaskId, newColumnId);
+            var opResult = _taskService.Move(invalidTaskId, newColumnId);
 
             // Assert
+            Assert.Equal(TaskOperationResult.NotFound, opResult);
             _taskRepositoryMock.Verify(r => r.Update(It.IsAny<TaskCard>()), Times.Never());
         }
     }
