@@ -10,13 +10,13 @@ namespace backend.Services
 
         public TaskCard? GetById(Guid id);
 
-        public TaskCard Create(CreateTaskDto dto);
+        public (TaskCard? Task, TaskOperationResult Result) Create(CreateTaskDto dto);
 
-        public void Update(Guid id, UpdateTaskDto dto);
+        public TaskOperationResult Update(Guid id, UpdateTaskDto dto);
 
         public void Delete(Guid id);
 
-        public void Move(Guid id, Guid newColumnId);
+        public TaskOperationResult Move(Guid id, Guid newColumnId);
 
         public IEnumerable<TaskCard> Filter(Guid? boardId, Guid? columnId, string? search);
 

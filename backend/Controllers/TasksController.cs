@@ -42,12 +42,17 @@ namespace backend.Controllers
         /// Cria uma nova tarefa
         /// </summary>
         /// <param name="dto">Dados para criar a nova tarefa</param>
-        /// <returns>Tarefa criada</returns>
+        /// <returns>Tarefa criada, ou BadRequest se o board/coluna indicados não existirem</returns>
         [HttpPost]
-        public IActionResult Create(CreateTaskDto dto)
+        public IActionResult Create([FromBody] CreateTaskDto dto)
         {
-            var task = _service.Create(dto);
-            return Ok(task);
+            var (task, result) = _service.Create(dto);
+            return result switch
+            {
+                TaskOperationResult.InvalidBoard => BadRequest(new { message = "Board não encontrado." }),
+                TaskOperationResult.InvalidColumn => BadRequest(new { message = "Coluna não encontrada ou não pertence ao board indicado." }),
+                _ => Ok(task)
+            };
         }
 
         /// <summary>
@@ -55,12 +60,17 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="id">ID da tarefa a atualizar</param>
         /// <param name="dto">Novos dados da tarefa</param>
-        /// <returns>NoContent se atualizado com sucesso</returns>
+        /// <returns>NoContent se atualizado com sucesso, NotFound se a tarefa não existir, BadRequest se a coluna indicada for inválida</returns>
         [HttpPut("{id}")]
         public IActionResult Update(Guid id, [FromBody] UpdateTaskDto dto)
         {
-            _service.Update(id, dto);
-            return NoContent();
+            var result = _service.Update(id, dto);
+            return result switch
+            {
+                TaskOperationResult.NotFound => NotFound(),
+                TaskOperationResult.InvalidColumn => BadRequest(new { message = "Coluna não encontrada ou não pertence ao board da tarefa." }),
+                _ => NoContent()
+            };
         }
 
         /// <summary>
@@ -80,12 +90,17 @@ namespace backend.Controllers
         /// </summary>
         /// <param name="id">ID da tarefa a mover</param>
         /// <param name="dto">Dados com o ID da nova coluna</param>
-        /// <returns>NoContent se movida com sucesso</returns>
+        /// <returns>NoContent se movida com sucesso, NotFound se a tarefa não existir, BadRequest se a coluna indicada for inválida</returns>
         [HttpPatch("{id}/move")]
         public IActionResult Move(Guid id, [FromBody] MoveTaskDto dto)
         {
-            _service.Move(id, dto.NewColumnId);
-            return NoContent();
+            var result = _service.Move(id, dto.NewColumnId);
+            return result switch
+            {
+                TaskOperationResult.NotFound => NotFound(),
+                TaskOperationResult.InvalidColumn => BadRequest(new { message = "Coluna não encontrada ou não pertence ao board da tarefa." }),
+                _ => NoContent()
+            };
         }
 
         /// <summary>

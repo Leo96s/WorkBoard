@@ -10,14 +10,20 @@ namespace backend.Services
     public class TaskService : ITaskService
     {
         private readonly ITaskRepository _repository;
+        private readonly IBoardRepository _boardRepository;
+        private readonly IBoardColumnRepository _columnRepository;
 
         /// <summary>
-        /// Inicializa uma nova instância do TaskService com o repositório de tarefas
+        /// Inicializa uma nova instância do TaskService com os repositórios necessários
         /// </summary>
         /// <param name="repository">Repositório para gerenciar tarefas</param>
-        public TaskService(ITaskRepository repository)
+        /// <param name="boardRepository">Repositório para validar a existência de boards</param>
+        /// <param name="columnRepository">Repositório para validar a existência e pertença de colunas</param>
+        public TaskService(ITaskRepository repository, IBoardRepository boardRepository, IBoardColumnRepository columnRepository)
         {
             _repository = repository;
+            _boardRepository = boardRepository;
+            _columnRepository = columnRepository;
         }
 
         /// <summary>
@@ -37,9 +43,16 @@ namespace backend.Services
         /// Cria uma nova tarefa
         /// </summary>
         /// <param name="dto">Dados para criar a nova tarefa</param>
-        /// <returns>Tarefa criada</returns>
-        public TaskCard Create(CreateTaskDto dto)
+        /// <returns>Tarefa criada e o resultado da operação, ou null com o motivo da falha se o board/coluna forem inválidos</returns>
+        public (TaskCard? Task, TaskOperationResult Result) Create(CreateTaskDto dto)
         {
+            if (_boardRepository.GetById(dto.BoardId) == null)
+                return (null, TaskOperationResult.InvalidBoard);
+
+            var column = _columnRepository.GetById(dto.ColumnId);
+            if (column == null || column.BoardId != dto.BoardId)
+                return (null, TaskOperationResult.InvalidColumn);
+
             var task = new TaskCard
             {
                 Title = dto.Title,
@@ -51,7 +64,7 @@ namespace backend.Services
             };
 
             _repository.Add(task);
-            return task;
+            return (task, TaskOperationResult.Success);
         }
 
         /// <summary>
@@ -59,20 +72,28 @@ namespace backend.Services
         /// </summary>
         /// <param name="id">ID da tarefa a atualizar</param>
         /// <param name="dto">Novos dados da tarefa</param>
-        public void Update(Guid id, UpdateTaskDto dto)
+        /// <returns>Resultado da operação</returns>
+        public TaskOperationResult Update(Guid id, UpdateTaskDto dto)
         {
             var task = _repository.GetById(id);
-            if (task == null) return;
+            if (task == null) return TaskOperationResult.NotFound;
+
+            if (dto.ColumnId.HasValue)
+            {
+                var column = _columnRepository.GetById(dto.ColumnId.Value);
+                if (column == null || column.BoardId != task.BoardId)
+                    return TaskOperationResult.InvalidColumn;
+
+                task.ColumnId = dto.ColumnId.Value;
+            }
 
             task.Title = dto.Title;
             task.Description = dto.Description;
             task.AssignedTo = dto.AssignedTo;
             task.Tags = dto.Tags;
 
-            if (dto.ColumnId.HasValue)
-                task.ColumnId = dto.ColumnId.Value;
-
             _repository.Update(task);
+            return TaskOperationResult.Success;
         }
 
         /// <summary>
@@ -86,13 +107,19 @@ namespace backend.Services
         /// </summary>
         /// <param name="id">ID da tarefa a mover</param>
         /// <param name="newColumnId">ID da nova coluna</param>
-        public void Move(Guid id, Guid newColumnId)
+        /// <returns>Resultado da operação</returns>
+        public TaskOperationResult Move(Guid id, Guid newColumnId)
         {
             var task = _repository.GetById(id);
-            if (task == null) return;
+            if (task == null) return TaskOperationResult.NotFound;
+
+            var column = _columnRepository.GetById(newColumnId);
+            if (column == null || column.BoardId != task.BoardId)
+                return TaskOperationResult.InvalidColumn;
 
             task.ColumnId = newColumnId;
             _repository.Update(task);
+            return TaskOperationResult.Success;
         }
 
         /// <summary>
