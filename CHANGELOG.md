@@ -1,3 +1,5 @@
+## v1.1.6 - 2026-07-18
+* fix: corrige resposta 204 no proxy, remove logs de debug e trata falhas de rede
 ## v1.1.5 - 2026-07-18
 * test: cobertura para reorder, validação, seed e middleware de autenticação
 ## v1.1.4 - 2026-07-18
