@@ -1,3 +1,5 @@
+## v1.1.4 - 2026-07-18
+* fix: BasicAuthMiddleware deixa de rebentar com header malformado
 ## v1.1.3 - 2026-07-18
 * fix: torna os repositórios em memória thread-safe e remove duplicação
 ## v1.1.2 - 2026-07-18
