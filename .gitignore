@@ -57,3 +57,4 @@ TestResult.xml
 nunit-*.xml
 /backend/.vs
 /.history
+/.claude
