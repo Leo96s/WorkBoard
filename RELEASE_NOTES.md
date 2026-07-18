@@ -1,3 +1,5 @@
+## v1.2.4 - 2026-07-18
+* docs: atualiza README com as novas funcionalidades e testes
 ## v1.2.3 - 2026-07-18
 * fix: restringe tamanho de campos, corrige overflow visual e torna a interface responsiva
 ## v1.2.2 - 2026-07-18
