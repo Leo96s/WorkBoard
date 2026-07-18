@@ -1,3 +1,5 @@
+## v1.1.3 - 2026-07-18
+* fix: torna os repositórios em memória thread-safe e remove duplicação
 ## v1.1.2 - 2026-07-18
 * fix: valida dados de entrada e relações entre tarefas, boards e colunas
 ## v1.1.1 - 2026-07-18
