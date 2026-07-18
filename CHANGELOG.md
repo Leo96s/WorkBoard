@@ -1,3 +1,5 @@
+## v1.1.2 - 2026-07-18
+* fix: valida dados de entrada e relações entre tarefas, boards e colunas
 ## v1.1.1 - 2026-07-18
 * test: configura vitest e testing library no frontend
 ## v1.1.0 - 2026-07-18
