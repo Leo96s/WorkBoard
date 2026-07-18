@@ -31,9 +31,18 @@ namespace backend.Services
             _boardRepository = boardRepository;
             _columnRepository = columnRepository;
             _taskRepository = taskRepository;
+        }
 
-            // Criar colunas por defeito para o board inicial
-            var defaultBoard = new Board { Name = "Meu Quadro" };
+        /// <summary>
+        /// Cria o board por defeito com as colunas padrão, caso ainda não exista nenhum board.
+        /// Chamado explicitamente no arranque da aplicação (ver Program.cs), não no construtor,
+        /// para manter o serviço livre de efeitos secundários ao ser resolvido pela DI.
+        /// </summary>
+        public void SeedDefaultBoardIfNone()
+        {
+            if (_boardRepository.GetAll().Any()) return;
+
+            var defaultBoard = new Board { Name = "Meu Quadro", Order = 1 };
             _boardRepository.Add(defaultBoard);
             SeedDefaultColumns(defaultBoard.Id);
         }
@@ -63,7 +72,10 @@ namespace backend.Services
         /// <returns>Board criado convertido para DTO</returns>
         public BoardDto Create(CreateBoardDto dto)
         {
-            var board = new Board { Name = dto.Name };
+            var existingBoards = _boardRepository.GetAll();
+            var order = existingBoards.Any() ? existingBoards.Max(b => b.Order) + 1 : 1;
+
+            var board = new Board { Name = dto.Name, Order = order };
             _boardRepository.Add(board);
             SeedDefaultColumns(board.Id);
             return ToDto(board);
@@ -153,6 +165,47 @@ namespace backend.Services
         }
 
         /// <summary>
+        /// Reordena os boards existentes
+        /// </summary>
+        /// <param name="orderedIds">Lista de IDs de boards na nova ordem desejada</param>
+        /// <returns>true se reordenado com sucesso, false se a lista não corresponder aos boards existentes</returns>
+        public bool ReorderBoards(List<Guid> orderedIds)
+        {
+            var boards = _boardRepository.GetAll().ToList();
+            if (orderedIds.Count != boards.Count || !orderedIds.All(id => boards.Any(b => b.Id == id)))
+                return false;
+
+            for (int i = 0; i < orderedIds.Count; i++)
+            {
+                var board = boards.First(b => b.Id == orderedIds[i]);
+                board.Order = i + 1;
+                _boardRepository.Update(board);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Reordena as colunas de um board
+        /// </summary>
+        /// <param name="boardId">ID do board proprietário das colunas</param>
+        /// <param name="orderedColumnIds">Lista de IDs de colunas na nova ordem desejada</param>
+        /// <returns>true se reordenado com sucesso, false se a lista não corresponder às colunas do board</returns>
+        public bool ReorderColumns(Guid boardId, List<Guid> orderedColumnIds)
+        {
+            var columns = _columnRepository.GetByBoardId(boardId).ToList();
+            if (orderedColumnIds.Count != columns.Count || !orderedColumnIds.All(id => columns.Any(c => c.Id == id)))
+                return false;
+
+            for (int i = 0; i < orderedColumnIds.Count; i++)
+            {
+                var column = columns.First(c => c.Id == orderedColumnIds[i]);
+                column.Order = i + 1;
+                _columnRepository.Update(column);
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Cria e adiciona as colunas padrão para um novo board
         /// </summary>
         /// <param name="boardId">ID do board onde adicionar as colunas padrão</param>
@@ -181,6 +234,7 @@ namespace backend.Services
         {
             Id = board.Id,
             Name = board.Name,
+            Order = board.Order,
             Columns = _columnRepository.GetByBoardId(board.Id).Select(ToColumnDto).ToList()
         };
 

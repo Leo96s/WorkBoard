@@ -65,6 +65,11 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<IBoardService>().SeedDefaultBoardIfNone();
+}
+
 app.UseCors("AllowFrontend");
 app.UseSwagger();
 app.UseSwaggerUI();

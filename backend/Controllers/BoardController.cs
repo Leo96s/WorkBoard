@@ -105,5 +105,30 @@ namespace backend.Controllers
             var ok = _service.DeleteColumn(boardId, columnId);
             return ok ? NoContent() : NotFound();
         }
+
+        /// <summary>
+        /// Reordena os boards existentes
+        /// </summary>
+        /// <param name="dto">Lista ordenada de IDs de todos os boards</param>
+        /// <returns>NoContent se reordenado com sucesso, BadRequest se a lista não corresponder aos boards existentes</returns>
+        [HttpPatch("reorder")]
+        public IActionResult ReorderBoards([FromBody] ReorderDto dto)
+        {
+            var ok = _service.ReorderBoards(dto.OrderedIds);
+            return ok ? NoContent() : BadRequest(new { message = "Lista de boards inválida." });
+        }
+
+        /// <summary>
+        /// Reordena as colunas de um board
+        /// </summary>
+        /// <param name="boardId">ID do board proprietário das colunas</param>
+        /// <param name="dto">Lista ordenada de IDs de todas as colunas do board</param>
+        /// <returns>NoContent se reordenado com sucesso, BadRequest se a lista não corresponder às colunas do board</returns>
+        [HttpPatch("{boardId}/columns/reorder")]
+        public IActionResult ReorderColumns(Guid boardId, [FromBody] ReorderDto dto)
+        {
+            var ok = _service.ReorderColumns(boardId, dto.OrderedIds);
+            return ok ? NoContent() : BadRequest(new { message = "Lista de colunas inválida." });
+        }
     }
 }

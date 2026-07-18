@@ -27,6 +27,12 @@ namespace backend.Repositories
         void Add(Board board);
 
         /// <summary>
+        /// Atualiza um board existente
+        /// </summary>
+        /// <param name="board">Board com dados atualizados</param>
+        void Update(Board board);
+
+        /// <summary>
         /// Deleta um board
         /// </summary>
         /// <param name="id">ID do board a deletar</param>
