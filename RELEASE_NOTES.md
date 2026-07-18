@@ -1,3 +1,5 @@
+## v1.2.1 - 2026-07-18
+* fix: uniformiza tratamento de erros e evita crash em falhas de validação
 ## v1.2.0 - 2026-07-18
 * feat: persiste reorder de boards e colunas no frontend
 ## v1.1.6 - 2026-07-18
