@@ -1,3 +1,5 @@
+## v1.1.0 - 2026-07-18
+* feat: adiciona reorder persistente de boards e colunas e move o seed para o arranque
 ## v1.0.10 - 2026-06-24
 * fix: corrigido erros no backend e frontend que quebraram ligaçoes
 ## v1.0.9 - 2026-06-24
