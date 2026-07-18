@@ -11,12 +11,6 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
   const path = pathSegments.join("/");
   const targetUrl = `${API_URL}/${path}${req.nextUrl.search}`;
 
-  // 👇 Adiciona isto temporariamente
-  console.log("=== PROXY DEBUG ===");
-  console.log("API_URL:", API_URL);
-  console.log("path segments:", pathSegments);
-  console.log("targetUrl:", targetUrl);
-
   const init: RequestInit = {
     method: req.method,
     headers: {
@@ -29,17 +23,24 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
     init.body = await req.text();
   }
 
-  const res = await fetch(targetUrl, init);
-  const data = await res.text();
+  try {
+    const res = await fetch(targetUrl, init);
+    const data = await res.text();
 
-  // 👇 E isto
-  console.log("backend status:", res.status);
-  console.log("backend response:", data);
+    // Respostas com estes status não podem ter corpo (spec do Fetch) — passar "" faria
+    // o construtor de Response rejeitar com "Invalid response status code".
+    const isNullBodyStatus = res.status === 204 || res.status === 205 || res.status === 304;
 
-  return new Response(data, {
-    status: res.status,
-    headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
-  });
+    return new Response(isNullBodyStatus ? null : data, {
+      status: res.status,
+      headers: { "Content-Type": res.headers.get("Content-Type") || "application/json" },
+    });
+  } catch {
+    return Response.json(
+      { message: "Não foi possível contactar o servidor. Tenta novamente mais tarde." },
+      { status: 502 }
+    );
+  }
 }
 
 export const GET = handler;
