@@ -1,10 +1,9 @@
-import { Board, TaskCard } from "@/types";
+import { Board, BoardColumn } from "@/types";
 import { DropResult } from "@hello-pangea/dnd";
-import { taskApi } from "@/lib/api";
 
 /**
  * Hook para gerir o fim do drag and drop
- * Responsável por reordenar boards, colunas e mover tarefas
+ * Calcula a nova ordem/posição e delega a persistência para quem gere o estado (useBoards/useTasks)
  */
 export function useDragEnd() {
   /**
@@ -14,18 +13,16 @@ export function useDragEnd() {
     result: DropResult,
     {
       boards,
-      setBoards,
       activeBoard,
-      setActiveBoard,
-      tasks,
-      updateTaskLocally,
+      onReorderBoards,
+      onReorderColumns,
+      moveTask,
     }: {
       boards: Board[];
-      setBoards: (boards: Board[]) => void;
       activeBoard: Board | null;
-      setActiveBoard: (board: Board) => void;
-      tasks: TaskCard[];
-      updateTaskLocally: (id: string, columnId: string) => void;
+      onReorderBoards: (reordered: Board[]) => void | Promise<void>;
+      onReorderColumns: (reordered: BoardColumn[]) => void | Promise<void>;
+      moveTask: (id: string, columnId: string) => void | Promise<void>;
     }
   ) => {
     const { source, destination, draggableId, type } = result;
@@ -37,7 +34,7 @@ export function useDragEnd() {
       const reordered = Array.from(boards);
       const [moved] = reordered.splice(source.index, 1);
       reordered.splice(destination.index, 0, moved);
-      setBoards(reordered);
+      await onReorderBoards(reordered);
       return;
     }
 
@@ -47,14 +44,13 @@ export function useDragEnd() {
       const reordered = Array.from(activeBoard.columns);
       const [moved] = reordered.splice(source.index, 1);
       reordered.splice(destination.index, 0, moved);
-      setActiveBoard({ ...activeBoard, columns: reordered });
+      await onReorderColumns(reordered);
       return;
     }
 
     // Mover tarefa entre colunas
     if (!activeBoard) return;
-    updateTaskLocally(draggableId, destination.droppableId);
-    await taskApi.move(draggableId, destination.droppableId);
+    await moveTask(draggableId, destination.droppableId);
   };
 
   return { handleDragEnd };

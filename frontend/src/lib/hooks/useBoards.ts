@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Board } from "@/types";
-import { boardApi } from "@/lib/api";
+import { Board, BoardColumn } from "@/types";
+import { boardApi, columnApi } from "@/lib/api";
+import { getErrorMessage } from "@/lib/utils/apiError";
 
 /**
  * Hook para gerir boards
@@ -14,25 +15,36 @@ export function useBoards() {
    * Carrega todos os boards e define o board ativo
    */
   const loadBoards = async () => {
-    const res = await boardApi.getAll();
-    setBoards(res.data);
+    try {
+      const res = await boardApi.getAll();
+      setBoards(res.data);
 
-    if (res.data.length > 0) {
-      if (!activeBoard) {
-        setActiveBoard(res.data[0]);
-      } else {
-        const fresh = res.data.find((b: Board) => b.id === activeBoard.id);
-        setActiveBoard(fresh ?? res.data[0]);
+      if (res.data.length > 0) {
+        if (!activeBoard) {
+          setActiveBoard(res.data[0]);
+        } else {
+          const fresh = res.data.find((b: Board) => b.id === activeBoard.id);
+          setActiveBoard(fresh ?? res.data[0]);
+        }
       }
+    } catch (error) {
+      alert(getErrorMessage(error, "Não foi possível carregar os boards. Tenta novamente."));
     }
   };
 
   /**
    * Cria um novo board
+   * @returns true se criado com sucesso, false caso contrário (já mostra alerta ao utilizador)
    */
-  const createBoard = async (name: string) => {
-    await boardApi.create({ name });
-    await loadBoards();
+  const createBoard = async (name: string): Promise<boolean> => {
+    try {
+      await boardApi.create({ name });
+      await loadBoards();
+      return true;
+    } catch (error) {
+      alert(getErrorMessage(error, "Não foi possível criar o board. Tenta novamente."));
+      return false;
+    }
   };
 
   /**
@@ -46,8 +58,34 @@ export function useBoards() {
         setActiveBoard(null);
       }
       await loadBoards();
+    } catch (error) {
+      alert(getErrorMessage(error, "Não foi possível apagar o board."));
+    }
+  };
+
+  /**
+   * Reordena os boards (drag and drop) com atualização otimista e persistência no backend
+   */
+  const reorderBoards = async (reordered: Board[]) => {
+    setBoards(reordered);
+    try {
+      await boardApi.reorder(reordered.map((b) => b.id));
     } catch {
-      alert("Não foi possível apagar o board.");
+      await loadBoards();
+    }
+  };
+
+  /**
+   * Reordena as colunas do board ativo (drag and drop) com atualização otimista e persistência no backend
+   */
+  const reorderColumns = async (reordered: BoardColumn[]) => {
+    if (!activeBoard) return;
+
+    setActiveBoard({ ...activeBoard, columns: reordered });
+    try {
+      await columnApi.reorder(activeBoard.id, reordered.map((c) => c.id));
+    } catch {
+      await loadBoards();
     }
   };
 
@@ -62,5 +100,7 @@ export function useBoards() {
     loadBoards,
     createBoard,
     deleteBoard,
+    reorderBoards,
+    reorderColumns,
   };
 }

@@ -119,6 +119,14 @@ export const boardApi = {
    */
   delete: (id: string) =>
     api.delete(`/boards/${id}`),
+
+  /**
+   * Reordena os boards existentes
+   * @param {string[]} orderedIds - IDs de todos os boards na nova ordem desejada
+   * @returns {Promise} Resultado da reordenação
+   */
+  reorder: (orderedIds: string[]) =>
+    api.patch("/boards/reorder", { orderedIds }),
 };
 
 /**
@@ -152,4 +160,13 @@ export const columnApi = {
    */
   delete: (boardId: string, columnId: string) =>
     api.delete(`/boards/${boardId}/columns/${columnId}`),
+
+  /**
+   * Reordena as colunas de um board
+   * @param {string} boardId - ID do board
+   * @param {string[]} orderedIds - IDs de todas as colunas do board na nova ordem desejada
+   * @returns {Promise} Resultado da reordenação
+   */
+  reorder: (boardId: string, orderedIds: string[]) =>
+    api.patch(`/boards/${boardId}/columns/reorder`, { orderedIds }),
 };
