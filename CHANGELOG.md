@@ -1,3 +1,5 @@
+## v1.1.1 - 2026-07-18
+* test: configura vitest e testing library no frontend
 ## v1.1.0 - 2026-07-18
 * feat: adiciona reorder persistente de boards e colunas e move o seed para o arranque
 ## v1.0.10 - 2026-06-24
