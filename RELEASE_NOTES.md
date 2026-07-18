@@ -1,3 +1,5 @@
+## v1.2.3 - 2026-07-18
+* fix: restringe tamanho de campos, corrige overflow visual e torna a interface responsiva
 ## v1.2.2 - 2026-07-18
 * test: adiciona testes para utilitários puros (tags e cores)
 ## v1.2.1 - 2026-07-18
