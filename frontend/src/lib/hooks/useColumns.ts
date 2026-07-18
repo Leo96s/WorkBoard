@@ -1,5 +1,6 @@
 import { columnApi } from "@/lib/api";
 import { getRandomColor } from "@/lib/utils/colors";
+import { getErrorMessage } from "@/lib/utils/apiError";
 
 /**
  * Hook para gerir colunas
@@ -8,28 +9,33 @@ import { getRandomColor } from "@/lib/utils/colors";
 export function useColumns() {
   /**
    * Cria uma nova coluna em um board
+   * @returns true se criada com sucesso, false caso contrário (já mostra alerta ao utilizador)
    */
-  const createColumn = async (boardId: string, name: string) => {
+  const createColumn = async (boardId: string, name: string): Promise<boolean> => {
     const color = getRandomColor();
-    await columnApi.create(boardId, { name, color });
+    try {
+      await columnApi.create(boardId, { name, color });
+      return true;
+    } catch (error) {
+      alert(getErrorMessage(error, "Não foi possível criar a coluna. Tenta novamente."));
+      return false;
+    }
   };
 
   /**
    * Deleta uma coluna de um board
    */
   const deleteColumn = async (boardId: string, columnId: string) => {
+    if (!boardId || !columnId) {
+      alert("Erro: IDs de board ou coluna inválidos");
+      return false;
+    }
+
     try {
-      if (!boardId || !columnId) {
-        console.error("IDs inválidos - boardId:", boardId, "columnId:", columnId);
-        alert("Erro: IDs de board ou coluna inválidos");
-        return false;
-      }
-      console.log("Deletando coluna:", { boardId, columnId });
       await columnApi.delete(boardId, columnId);
       return true;
-    } catch (error) {
-      console.error("Erro ao deletar coluna:", error);
-      alert("Erro ao deletar coluna");
+    } catch {
+      alert("Erro ao apagar a coluna. Tenta novamente.");
       return false;
     }
   };

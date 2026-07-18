@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * Hook para gerir tags globais
@@ -8,17 +8,16 @@ export function useTags() {
   const [globalTags, setGlobalTags] = useState<string[]>([]);
 
   /**
-   * Mescla novas tags nas tags globais
+   * Mescla novas tags nas tags globais.
+   * Identidade estável (useCallback) e sem criar array novo quando nada muda,
+   * para poder ser usado em segurança como dependência de useEffect sem risco de loop.
    */
-  const mergeGlobalTags = (newTags: string[]) => {
+  const mergeGlobalTags = useCallback((newTags: string[]) => {
     setGlobalTags(prev => {
-      const merged = [...prev];
-      newTags.forEach(t => {
-        if (!merged.includes(t)) merged.push(t);
-      });
-      return merged;
+      const toAdd = newTags.filter(t => !prev.includes(t));
+      return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
     });
-  };
+  }, []);
 
   return {
     globalTags,
