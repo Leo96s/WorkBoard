@@ -1,6 +1,6 @@
 ﻿namespace backend.Models
 {
-    public class BoardColumn
+    public class BoardColumn : IEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 

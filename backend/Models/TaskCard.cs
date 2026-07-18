@@ -1,6 +1,6 @@
 ﻿namespace backend.Models
 {
-    public class TaskCard
+    public class TaskCard : IEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
