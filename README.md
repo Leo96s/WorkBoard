@@ -8,9 +8,14 @@ Um quadro de tarefas em estilo **Kanban** que permite às equipas organizar o tr
 - ✅ Gestão de múltiplos boards
 - ✅ Colunas personalizáveis com cores
 - ✅ Tarefas com tags, descrição e responsável
+- ✅ Reordenação de boards e colunas por drag & drop, persistente no backend
+- ✅ Validação de dados e de integridade referencial (relações entre tarefas, boards e colunas)
+- ✅ Repositórios em memória thread-safe, sem perda de dados em pedidos concorrentes
+- ✅ Interface responsiva, com boa experiência em desktop e em telemóvel
 - ✅ Autenticação por Basic Auth
 - ✅ API RESTful completa com Swagger
 - ✅ Persistência em memória (pronta para migração para base de dados)
+- ✅ Testes automatizados no backend (xUnit) e no frontend (Vitest + Testing Library)
 
 ---
 
@@ -52,6 +57,20 @@ Esta abordagem facilita a manutenção, evolução e testabilidade da aplicaçã
 Mesmo utilizando persistência em memória, foi mantida uma camada de repositórios através de interfaces.
 
 Isto permite que, futuramente, a aplicação possa ser migrada para uma base de dados real com impacto mínimo na lógica de negócio, bastando substituir as implementações dos repositórios.
+
+As três implementações em memória (`InMemoryBoardRepository`, `InMemoryBoardColumnRepository`, `InMemoryTaskRepository`) partilham uma base genérica (`InMemoryRepository<T>`) assente num `ConcurrentDictionary`, em vez de uma `List<T>` simples. Isto elimina a duplicação de código de CRUD entre repositórios e evita corrupção de estado quando várias requisições concorrentes leem/escrevem ao mesmo tempo.
+
+### Validação de Dados e de Relações
+
+Os DTOs de entrada (título, nome, cor, etc.) têm `DataAnnotations` que espelham as regras de negócio (campos obrigatórios, tamanhos máximos, formato de cor), devolvendo automaticamente `400 Bad Request` com mensagens claras quando os dados são inválidos.
+
+Além disso, o `TaskService` valida que o board e a coluna indicados numa tarefa existem e que a coluna pertence mesmo ao board indicado, evitando tarefas "órfãs" ou movidas para colunas de outro board.
+
+### Testes Automatizados
+
+O backend tem uma suite de testes com **xUnit** e **Moq**, cobrindo os serviços de negócio (criação, atualização, remoção, reordenação, validação de relações) e o middleware de autenticação.
+
+O frontend tem uma suite de testes com **Vitest** e **React Testing Library**, cobrindo os hooks de gestão de estado (boards, tarefas, colunas, tags, drag-and-drop), utilitários puros e componentes de interface (validação visual de limites de campo, truncamento de texto longo).
 
 ### Interface Kanban Simples e Funcional
 
@@ -105,12 +124,13 @@ npm --version
 WorkBoard/
 ├── backend/                      # ASP.NET Core API
 │   ├── Controllers/              # Endpoints da API
-│   ├── Services/                 # Lógica de negócio
-│   ├── Repositories/             # Acesso a dados
-│   ├── DTOs/                     # Data Transfer Objects
-│   ├── Models/                   # Modelos de dados
+│   ├── Services/                 # Lógica de negócio (inclui TaskOperationResult)
+│   ├── Repositories/             # Acesso a dados (InMemoryRepository<T> genérico e thread-safe)
+│   ├── DTOs/                     # Data Transfer Objects (com DataAnnotations)
+│   ├── Models/                   # Modelos de dados (implementam IEntity)
 │   ├── Middleware/               # Middleware de autenticação
 │   ├── Properties/               # Configurações (launchSettings.json)
+│   ├── backend.Tests/            # Testes automatizados (xUnit + Moq)
 │   ├── appsettings.json          # Configuração principal
 │   ├── appsettings.Development.json
 │   ├── .env                      # ⚠️ FICHEIRO CRÍTICO (não incluído no git)
@@ -119,14 +139,15 @@ WorkBoard/
 │
 ├── frontend/                     # Next.js React App
 │   ├── src/
-│   │   ├── app/                  # Layout e página principal
-│   │   ├── components/           # Componentes React
-│   │   ├── lib/                  # Utilitários (API client, cores)
+│   │   ├── app/                  # Layout, página principal e proxy da API
+│   │   ├── components/           # Componentes React (com testes *.test.tsx)
+│   │   ├── lib/                  # Utilitários (API client, cores, limites de campo)
 │   │   │   │ 
-│   │   │   ├── hooks/            # Hooks criados para o projeto
-│   │   │   └── utils/            # Métodos utilitários do projeto
+│   │   │   ├── hooks/            # Hooks criados para o projeto (com testes *.test.ts)
+│   │   │   └── utils/            # Métodos utilitários do projeto (com testes *.test.ts)
 │   │   └── types/                # TypeScript interfaces
 │   ├── .env                      # ⚠️ FICHEIRO CRÍTICO (não incluído no git)
+│   ├── vitest.config.ts          # Configuração dos testes (Vitest)
 │   ├── package.json              # Dependências npm
 │   ├── next.config.ts            # Configuração Next.js
 │   └── tsconfig.json             # Configuração TypeScript
@@ -314,6 +335,9 @@ dotnet publish -c Release
 
 # Limpar ficheiros compilados
 dotnet clean
+
+# Correr os testes automatizados (xUnit)
+dotnet test
 ```
 
 ### Frontend (Next.js)
@@ -336,6 +360,12 @@ npm run start
 
 # Executar linter
 npm run lint
+
+# Correr os testes automatizados (Vitest)
+npm run test
+
+# Correr os testes em modo watch
+npm run test:watch
 ```
 
 ---
@@ -392,15 +422,17 @@ npm install
 - **Padrão**: Controllers, Services, Repositories, DTOs
 - **Autenticação**: Basic Auth com Middleware
 - **API Docs**: Swagger/OpenAPI
-- **Banco**: Em memória (pronto para SQL Server/PostgreSQL)
+- **Banco**: Em memória, com repositório genérico thread-safe (`ConcurrentDictionary`), pronto para SQL Server/PostgreSQL
+- **Testes**: xUnit + Moq
 
 ### Frontend
 - **Framework**: Next.js 14+
 - **Linguagem**: TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS (responsivo, mobile-first)
 - **HTTP Client**: Axios
 - **Drag & Drop**: @hello-pangea/dnd
 - **React Version**: 19.2.4
+- **Testes**: Vitest + React Testing Library
 
 ---
 
@@ -431,5 +463,5 @@ Este projeto está licenciado sob a MIT License - veja o ficheiro [LICENSE](LICE
 
 ---
 
-**Versão Atual**: v1.1.0  
-**Última Atualização**: 2 de Junho de 2026 
+**Versão Atual**: v1.2.3  
+**Última Atualização**: 18 de Julho de 2026 
