@@ -35,7 +35,7 @@ export default function KanbanColumn({
   return (
     <div
       style={borderStyle}
-      className="flex flex-col bg-gray-50 rounded-xl p-4 border-t-4 h-[600px]"
+      className="flex flex-col bg-gray-50 rounded-xl p-4 border-t-4 h-[70vh] max-h-150"
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-4">

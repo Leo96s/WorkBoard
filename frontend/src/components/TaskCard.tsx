@@ -60,9 +60,9 @@ export default function TaskCard({ task, index, columns, onEdit, onDelete, onMov
           )}
 
           {/* Footer */}
-          <div className="flex justify-between text-xs text-gray-400">
-            <span>👤 {task.assignedTo || "—"}</span>
-            <span>{new Date(task.createdAt).toLocaleString("pt-PT", {
+          <div className="flex justify-between items-center gap-2 text-xs text-gray-400">
+            <span className="truncate min-w-0">👤 {task.assignedTo || "—"}</span>
+            <span className="shrink-0">{new Date(task.createdAt).toLocaleString("pt-PT", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
@@ -78,7 +78,8 @@ export default function TaskCard({ task, index, columns, onEdit, onDelete, onMov
               {task.tags.map((tag) => (
                 <span
                   key={tag}
-                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
+                  className={`max-w-35 truncate px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
+                  title={tag}
                 >
                   {tag}
                 </span>
@@ -88,7 +89,7 @@ export default function TaskCard({ task, index, columns, onEdit, onDelete, onMov
 
           {/* Mover para coluna */}
           <select
-            className="mt-1 text-xs border border-gray-200 rounded px-2 py-1 bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-300"
+            className="mt-1 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-2 py-1.5 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
             value={task.columnId}
             onChange={(e) => onMove(task.id, e.target.value)}
           >

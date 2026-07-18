@@ -1,5 +1,6 @@
 import { TaskCard, BoardColumn } from "@/types";
 import { tagColor } from "@/lib/tagColor";
+import { LIMITS } from "@/lib/constants";
 
 interface Props {
   task?: TaskCard;
@@ -54,10 +55,10 @@ export default function TaskModal({
 }: Props) {
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-[440px] p-6 flex flex-col gap-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-y-auto p-6 flex flex-col gap-4">
         <h2 className="text-lg font-bold text-gray-800">
           {task ? "Editar Tarefa" : "Nova Tarefa"}
         </h2>
@@ -73,6 +74,7 @@ export default function TaskModal({
             onChange={(e) => onTitleChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && onSave()}
             placeholder="Título da tarefa..."
+            maxLength={LIMITS.taskTitle}
             className="border  text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -87,12 +89,13 @@ export default function TaskModal({
             onChange={(e) => onDescriptionChange(e.target.value)}
             placeholder="Descrição opcional..."
             rows={3}
+            maxLength={LIMITS.taskDescription}
             className="border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
           />
         </div>
 
         {/* Responsável e Coluna */}
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex flex-col gap-1 flex-1">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
               Responsável
@@ -101,6 +104,7 @@ export default function TaskModal({
               value={assignedTo}
               onChange={(e) => onAssignedToChange(e.target.value)}
               placeholder="Nome..."
+              maxLength={LIMITS.taskAssignedTo}
               className="border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -133,10 +137,10 @@ export default function TaskModal({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className={`inline-flex text-gray-900 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
+                  className={`inline-flex max-w-40 text-gray-900 items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${tagColor(tag)}`}
                 >
-                  {tag}
-                  <button onClick={() => onRemoveTag(tag)} className="hover:opacity-60 transition">
+                  <span className="truncate min-w-0" title={tag}>{tag}</span>
+                  <button onClick={() => onRemoveTag(tag)} className="shrink-0 hover:opacity-60 transition">
                     ×
                   </button>
                 </span>
@@ -159,6 +163,7 @@ export default function TaskModal({
                   if (e.key === "Escape") onShowTagDropdown(false);
                 }}
                 placeholder="Nova tag ou pesquisar..."
+                maxLength={LIMITS.tagName}
                 className="flex-1 border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               <button

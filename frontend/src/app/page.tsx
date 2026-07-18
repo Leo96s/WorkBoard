@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { TaskCard as ITaskCard, BoardColumn } from "@/types";
+import { LIMITS } from "@/lib/constants";
 import { useBoards } from "@/lib/hooks/useBoards";
 import { useTasks } from "@/lib/hooks/useTasks";
 import { useColumns } from "@/lib/hooks/useColumns";
@@ -26,7 +28,11 @@ export default function Home() {
     activeBoard,
     setActiveBoard,
     createBoard,
-    deleteBoard,    loadBoards,  } = useBoards();
+    deleteBoard,
+    loadBoards,
+    reorderBoards,
+    reorderColumns,
+  } = useBoards();
 
   const {
     tasks,
@@ -36,11 +42,17 @@ export default function Home() {
     updateTask,
     deleteTask,
     moveTask,
-    updateTaskLocally,
   } = useTasks(activeBoard?.id ?? null);
 
   const { createColumn, deleteColumn } = useColumns();
   const { globalTags, mergeGlobalTags } = useTags();
+
+  // Semeia as tags globais com as tags já existentes nas tarefas carregadas,
+  // para que as sugestões apareçam mesmo antes de se criar uma tag nesta sessão
+  useEffect(() => {
+    const existingTags = tasks.flatMap((t) => t.tags);
+    if (existingTags.length > 0) mergeGlobalTags(existingTags);
+  }, [tasks, mergeGlobalTags]);
 
   const [assignedToFilter, setAssignedToFilter] = useState("");
 
@@ -74,32 +86,31 @@ export default function Home() {
   const columns = activeBoard?.columns ?? [];
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
+    <main className="min-h-screen bg-gray-100 p-4 sm:p-8">
       <div className="flex flex-col h-full">
         <DragDropContext
           onDragEnd={(result) =>
             onDragEnd(result, {
               boards,
-              setBoards: () => {},
               activeBoard,
-              setActiveBoard,
-              tasks,
-              updateTaskLocally,
+              onReorderBoards: reorderBoards,
+              onReorderColumns: reorderColumns,
+              moveTask,
             })
           }
         >
           {/* HEADER */}
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               {/* DROPDOWN DE BOARDS */}
               <div ref={dropdownRef} className="relative">
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg font-semibold hover:bg-gray-50 border border-gray-200"
+                  className="flex items-center gap-2 px-4 py-2 max-w-40 sm:max-w-60 bg-white text-gray-700 rounded-lg font-semibold hover:bg-gray-50 border border-gray-200"
                 >
-                  <span>{activeBoard?.name ?? "Selecionar Board"}</span>
-                  <span className="text-xs">▼</span>
+                  <span className="truncate min-w-0">{activeBoard?.name ?? "Selecionar Board"}</span>
+                  <span className="text-xs shrink-0">▼</span>
                 </button>
 
                 {boardDropdownOpen && (
@@ -133,7 +144,7 @@ export default function Home() {
                                       setActiveBoard(board);
                                       closeDropdown();
                                     }}
-                                    className="flex-1 text-left text-sm"
+                                    className="flex-1 min-w-0 truncate text-left text-sm"
                                   >
                                     {board.name}
                                   </button>
@@ -170,29 +181,47 @@ export default function Home() {
               >
                 + Board
               </button>
+              </div>
+
+              {/* PESQUISA POR RESPONSÁVEL OU TAG */}
+              <div className="relative w-full sm:w-64">
+                <svg
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Pesquisar responsável ou tag..."
+                  value={assignedToFilter}
+                  onChange={async (e) => {
+                    const value = e.target.value;
+
+                    setAssignedToFilter(value);
+
+                    if (!activeBoard) return;
+
+                    if (value.trim() === "") {
+                      await loadTasks(activeBoard.id);
+                    } else {
+                      await searchTasks(activeBoard.id, value);
+                    }
+                  }}
+                  className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
             </div>
 
-            <h1 className="text-3xl text-gray-900 font-bold">{activeBoard?.name ?? "Boards"}</h1>
-          </div>
-          <input
-  type="text"
-  placeholder="Pesquisar responsável ou tag..."
-  value={assignedToFilter}
-  onChange={async (e) => {
-    const value = e.target.value;
-
-    setAssignedToFilter(value);
-
-    if (!activeBoard) return;
-
-    if (value.trim() === "") {
-      await loadTasks(activeBoard.id);
-    } else {
-      await searchTasks(activeBoard.id, value);
-    }
-  }}
-  className="w-64 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-/>
+            <h1 className="text-2xl sm:text-3xl text-gray-900 font-bold wrap-break-word">{activeBoard?.name ?? "Boards"}</h1>
           </div>
           {/* KANBAN */}
           <div className="overflow-x-auto pb-6 flex-1">
@@ -209,7 +238,7 @@ export default function Home() {
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className={`shrink-0 w-80 transition ${snapshot.isDragging ? "opacity-90 rotate-1" : ""}`}
+                          className={`shrink-0 w-[85vw] max-w-80 sm:w-80 transition ${snapshot.isDragging ? "opacity-90 rotate-1" : ""}`}
                         >
                           <KanbanColumn
                             column={col}
@@ -240,10 +269,10 @@ export default function Home() {
                   {provided.placeholder}
 
                   {/* BOTÃO NOVA COLUNA */}
-                  <div className="shrink-0 w-80 flex items-start">
+                  <div className="shrink-0 w-[85vw] max-w-80 sm:w-80 flex items-start">
                     <button
                       onClick={openColumnModal}
-                      className="h-[600px] w-full bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-400 hover:bg-blue-50 flex items-center justify-center transition"
+                      className="h-[70vh] max-h-150 w-full bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-400 hover:bg-blue-50 flex items-center justify-center transition"
                     >
                       <div className="text-center">
                         <div className="text-4xl text-gray-300 mb-2">+</div>
@@ -266,14 +295,15 @@ export default function Home() {
           globalTags={globalTags}
           onClose={closeTaskModal}
           onSave={async (data) => {
-            if (editingTask) {
-              await updateTask(editingTask.id, data);
-            } else {
-              await createTask({ ...data, boardId: activeBoard.id });
+            const ok = editingTask
+              ? await updateTask(editingTask.id, data)
+              : await createTask({ ...data, boardId: activeBoard.id });
+
+            if (ok) {
+              mergeGlobalTags(data.tags);
+              setTaskModalOpen(false);
+              setEditingTask(undefined);
             }
-            mergeGlobalTags(data.tags);
-            setTaskModalOpen(false);
-            setEditingTask(undefined);
           }}
         />
       )}
@@ -283,16 +313,16 @@ export default function Home() {
         <BoardModalWithLogic
           onClose={closeBoardModal}
           onSave={async (name) => {
-            await createBoard(name);
-            closeBoardModal();
+            const ok = await createBoard(name);
+            if (ok) closeBoardModal();
           }}
         />
       )}
 
       {/* COLUMN MODAL */}
       {columnModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl w-[380px] p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
             <h2 className="text-lg font-bold text-gray-800 mb-4">Nova Coluna</h2>
             <input
               autoFocus
@@ -304,6 +334,7 @@ export default function Home() {
                 }
               }}
               placeholder="Nome da coluna..."
+              maxLength={LIMITS.columnName}
               className="w-full border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <div className="flex justify-end gap-2 mt-4">
@@ -332,13 +363,23 @@ export default function Home() {
 
   async function handleCreateColumnConfirm() {
     if (activeBoard && newColumnName.trim()) {
-      await createColumn(activeBoard.id, newColumnName.trim());
+      const ok = await createColumn(activeBoard.id, newColumnName.trim());
+      if (!ok) return;
+
       await loadBoards();
       await loadTasks(activeBoard.id);
       setNewColumnName("");
       closeColumnModal();
     }
   }
+}
+
+interface TaskFormData {
+  title: string;
+  description: string;
+  assignedTo: string;
+  columnId: string;
+  tags: string[];
 }
 
 // Wrapper do TaskModal para gerir estado local do modal
@@ -349,11 +390,11 @@ function TaskModalWithLogic({
   onClose,
   onSave,
 }: Readonly<{
-  task: any;
-  columns: Array<any>;
+  task: ITaskCard | undefined;
+  columns: BoardColumn[];
   globalTags: string[];
   onClose: () => void;
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: TaskFormData) => Promise<void>;
 }>) {
   const [title, setTitle] = useState(task?.title ?? "");
   const [description, setDescription] = useState(task?.description ?? "");

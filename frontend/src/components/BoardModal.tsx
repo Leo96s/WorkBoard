@@ -1,3 +1,5 @@
+import { LIMITS } from "@/lib/constants";
+
 interface Props {
   name: string;
   onNameChange: (value: string) => void;
@@ -11,8 +13,8 @@ interface Props {
  */
 export default function BoardModal({ name, onNameChange, onClose, onSave }: Props) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-xl w-[380px] p-6">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
         <h2 className="text-lg font-bold text-gray-800 mb-4">Novo Board</h2>
 
         <input
@@ -21,6 +23,7 @@ export default function BoardModal({ name, onNameChange, onClose, onSave }: Prop
           onChange={(e) => onNameChange(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && name.trim() && onSave()}
           placeholder="Nome do board..."
+          maxLength={LIMITS.boardName}
           className="w-full border text-gray-900 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
